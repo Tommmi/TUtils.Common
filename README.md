@@ -2,7 +2,7 @@
 TUtils.Common.dll is a basic shared .NET-library for all projects based on the open TUtils-framework.
 
 ## History
-see [history](Documentation/history.md)
+see [history](documentation/history.md)
 
 ## Contents
 
