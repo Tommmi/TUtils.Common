@@ -1,0 +1,41 @@
+﻿<#@ template hostspecific="True" debug="True" #>
+<#@ output extension="cs" #>
+
+<#@ import namespace="System" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Xml.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #> 
+
+<#+ 
+public class THelper
+{
+	public static string FormatComment(string comment, int ident)
+	{
+		StringBuilder result = new StringBuilder();
+
+		string identText = "";
+		for( int i= 0; i<ident; i++)
+			identText += "	";
+		identText += "/// ";
+
+		var commentLines = comment.Split('\n');
+		bool bFirst = true;
+		foreach(var line in commentLines)
+		{
+			if ( !bFirst )
+				result.AppendLine().Append(identText);
+
+			result.Append(line);
+			bFirst = false;
+		}
+
+		return result.ToString();
+	}
+
+
+}
+#>
