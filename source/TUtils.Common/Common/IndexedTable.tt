@@ -4,8 +4,8 @@ output extension=".cs" #><#@
 Assembly Name="System.Core" #><#@ 
 Assembly Name="System.Windows.Forms" #><#@ 
 Assembly Name="System.Xml.Linq" #><#@ 
-include file="Common\TemplateFileManager.CS.ttinclude" #><#@ 
-include file="Common\THelper.ttinclude" #><#@ 
+include file="TemplateFileManager.CS.ttinclude" #><#@ 
+include file="THelper.ttinclude" #><#@ 
 import namespace="System" #><#@ 
 import namespace="System.IO" #><#@ 
 import namespace="System.Diagnostics" #><#@ 
@@ -85,8 +85,40 @@ public class IndexedTableGenerator
 
 #>
 	/// <summary>
-	/// A set of rows, that provides performance optimzed Find-methods to it's values.
+	/// A set of tuples, that provides performance optimized Find-methods to it's values.
+	/// With "IndexedTable" you needn't waste time in programming dictionaries for 
+	/// fast access to values by different keys. "IndexedTable" will care for instantiating such
+	/// dictionaries on-the-fly. It will also keep them up to date. Do you want to use a compound
+	/// key ? Don't worry. "IndexedTable" will use coumpound hash keys automatically if neccessary.
 	/// </summary>
+	/// <remarks>
+	/// <example>
+	/// Guess you have an in-memory set of workshop registrations. One student may be registrated for 
+	/// several workshops. One workshop normally have several students.
+	/// <code><![CDATA[
+	/// var registrations = new IndexedTable<Student,Workshop>();
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop2));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop3));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student3, workshop1));
+	/// ]]></code>
+	/// Guess now you want to find all fellows of student2 without iterating slowly through all registrations.
+	/// So you need to look fast for all workshops of student2 and after that fast for all students in these workshops.
+	/// Normally you would have to program two hash maps and keep them up-to-date for every insert of a registration.
+	/// With IndexedTable you have to write only the following:
+	/// <code><![CDATA[
+	/// IEnumerable<Student> fellows = registrations
+	/// 	.FindByItem1(student2)
+	/// 	.Select(t => t.Item2) // workshop
+	/// 	.SelectMany(workshop => registrations.FindByItem2(workshop))
+	/// 	.Select(t => t.Item1)
+	///		.Where(student=>student != student2)
+	///		.Distinct(); // ==> student1
+	/// ]]></code>
+	/// 
+	/// </example>
+	/// </remarks>
 	public class IndexedTable<<#=T1_T2#>> : IndexedTableBase
 	{
 		public IndexedTable()

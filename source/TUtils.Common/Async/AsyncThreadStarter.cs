@@ -95,7 +95,7 @@ namespace TUtils.Common.Async
 				ThreadName = threadName;
 				_threadMethod = threadMethod;
 				_cancellationToken = cancellationToken;
-				_logger = logger??new TLog(new LogMoc(),false);
+				_logger = logger??new TLog(new LogMocWriter(),false);
 				// waiting tasks for the events _startedEv and _terminatedEv may not be canceled 
 				_startedEv = new AsyncEvent(null);
 				_waitForStart = _startedEv.RegisterForEvent();

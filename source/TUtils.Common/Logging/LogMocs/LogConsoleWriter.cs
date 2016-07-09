@@ -6,12 +6,12 @@ using TUtils.Common.Logging.Common;
 
 namespace TUtils.Common.Logging.LogMocs
 {
-	public class LogConsole : ILogXImplementor
+	public class LogConsoleWriter : ILogWriter
 	{
 		private readonly LogSeverityEnum _minSeverity;
 		private readonly List<KeyValuePair<string, bool>> _configurations;
 
-		public LogConsole(
+		public LogConsoleWriter(
 			LogSeverityEnum minSeverity,
 			List<string> namespacesWhiteList,
 			List<string> namespacesBlackList)
@@ -37,7 +37,7 @@ namespace TUtils.Common.Logging.LogMocs
 		}
 
 
-		bool ILogXImplementor.IsActive(Dictionary<Guid, ILogValue> logValues)
+		bool ILogWriter.IsActive(Dictionary<Guid, ILogValue> logValues)
 		{
 			string strNamespace;
 			LogSeverityEnum severity;
@@ -59,7 +59,7 @@ namespace TUtils.Common.Logging.LogMocs
 				.Value;
 		}
 
-		void ILogXImplementor.Write2LogFile(Dictionary<Guid, ILogValue> logValues)
+		void ILogWriter.Write2LogFile(Dictionary<Guid, ILogValue> logValues)
 		{
 			string strNamespace;
 			TryGetValue(logValues, PredefinedLoggingValueIDs.Namespace, out strNamespace);

@@ -11,7 +11,7 @@ using TUtils.Common.Logging.Common;
 
 namespace TUtils.Common.Logging.Log4Net
 {
-	public class Log4NetXImplementor : ILogXImplementor
+	public class Log4NetWriter : ILogWriter
 	{
 		private readonly Dictionary<string, ILog> _mapLogger = new Dictionary<string, ILog>();
 		private static readonly object _syncObj;
@@ -20,7 +20,7 @@ namespace TUtils.Common.Logging.Log4Net
 		/// </summary>
 		private static readonly List<Guid> _columns;
 
-		static Log4NetXImplementor()
+		static Log4NetWriter()
 		{
 			_syncObj = new object();
 			_columns = new List<Guid>
@@ -111,7 +111,7 @@ namespace TUtils.Common.Logging.Log4Net
 			return true;
 		}
 
-		bool ILogXImplementor.IsActive(Dictionary<Guid, ILogValue> logValues)
+		bool ILogWriter.IsActive(Dictionary<Guid, ILogValue> logValues)
 		{
 			string category;
 			LogSeverityEnum severity;
@@ -178,7 +178,7 @@ namespace TUtils.Common.Logging.Log4Net
 			}
 		}
 
-		void ILogXImplementor.Write2LogFile(Dictionary<Guid, ILogValue> logValues)
+		void ILogWriter.Write2LogFile(Dictionary<Guid, ILogValue> logValues)
 		{
 			string category;
 			LogSeverityEnum severity;

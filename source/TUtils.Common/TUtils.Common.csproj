@@ -56,8 +56,7 @@
     <Compile Include="CommandLine\Common\CommandLineParseResult.cs" />
     <Compile Include="CommandLine\Common\ICommandLineArg.cs" />
     <Compile Include="Common\TFilePath.cs" />
-    <Compile Include="Common\TThreadStorage.cs" />
-    <Compile Include="ComparableObjectArray.cs" />
+    <Compile Include="Common\ComparableObjectArray.cs" />
     <Compile Include="Extensions\ExceptionHelperSql.cs" />
     <Compile Include="Extensions\Extension.ObjectExtension.cs" />
     <Compile Include="Extensions\Extension.StringExtension.cs" />
@@ -67,7 +66,7 @@
     <Compile Include="Extensions\SimpleTypeExtensions.cs" />
     <Compile Include="Extensions\StaticReflection.cs" />
     <Compile Include="Extensions\TaskExtension.cs" />
-    <Compile Include="IndexedTable.cs">
+    <Compile Include="Common\IndexedTable.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>IndexedTable.tt</DependentUpon>
@@ -90,17 +89,17 @@
     <Compile Include="Security\Asymmetric\Common\IPrivateCertificate.cs" />
     <Compile Include="Security\Asymmetric\Common\IPublicCertContentBase64String.cs" />
     <Compile Include="Security\Asymmetric\Common\IPublicCertificate.cs" />
-    <Compile Include="ISystemTimeProvider.cs" />
+    <Compile Include="Common\ISystemTimeProvider.cs" />
     <Compile Include="Logging\Common\ILoggingValueKey.cs" />
     <Compile Include="Logging\Common\ILogValue.cs" />
     <Compile Include="Logging\Common\ILogValueProvider.cs" />
-    <Compile Include="Logging\Common\ILogXImplementor.cs" />
+    <Compile Include="Logging\Common\ILogWriter.cs" />
     <Compile Include="Logging\ITLog.cs" />
-    <Compile Include="Logging\Log4Net\Log4NetXImplementor.cs" />
+    <Compile Include="Logging\Log4Net\Log4NetWriter.cs" />
     <Compile Include="Logging\Common\LoggingValueID.cs" />
     <Compile Include="Logging\Common\LoggingValueIDAttribute.cs" />
-    <Compile Include="Logging\LogMocs\LogConsole.cs" />
-    <Compile Include="Logging\LogMocs\LogMoc.cs" />
+    <Compile Include="Logging\LogMocs\LogConsoleWriter.cs" />
+    <Compile Include="Logging\LogMocs\LogMocWriter.cs" />
     <Compile Include="Logging\Common\LogSeverityEnum.cs" />
     <Compile Include="Logging\Common\LogValue.cs" />
     <Compile Include="Logging\Common\MPredefinedLoggingValueIDs.cs" />
@@ -124,13 +123,13 @@
     <Compile Include="Security\Symmetric\AesCryptoServiceProvider\SymmetricCrypt.cs" />
     <Compile Include="Security\Symmetric\Common\SymmetricSecret.cs" />
     <Compile Include="Common\SystemTimeProvider.cs" />
-    <Compile Include="TThreadStorage.cs" />
+    <Compile Include="Common\TThreadStorage.cs" />
     <None Include="Common\TemplateFileManager.CS.ttinclude" />
     <None Include="Common\THelper.ttinclude" />
     <None Include="postbuild.bat" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="IndexedTable.tt">
+    <Content Include="Common\IndexedTable.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IndexedTable.cs</LastGenOutput>
     </Content>

@@ -8,8 +8,8 @@ using TUtils.Common.Logging;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace TUtils.Common.Common
-{
+namespace TUtils.Common
+{ 
 	/// <summary>
 	/// Represents a file path.
 	/// Splits a file path into 

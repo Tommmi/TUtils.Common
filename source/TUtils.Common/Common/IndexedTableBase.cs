@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TUtils.Common.Common
+// ReSharper disable once CheckNamespace
+namespace TUtils.Common
 {
 	/// <summary>
 	/// A set of rows, that provides performance optimzed Find-methods to it's values.
@@ -389,4 +390,5 @@ namespace TUtils.Common.Common
 
 		#endregion
 	}
+
 }

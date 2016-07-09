@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TUtils.Common.Common
+namespace TUtils.Common
 {
 	public class SystemTimeProvider : ISystemTimeProvider
 	{

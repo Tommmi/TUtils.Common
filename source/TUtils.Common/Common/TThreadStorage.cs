@@ -1,6 +1,7 @@
 ﻿using System.Threading;
+// ReSharper disable MemberCanBePrivate.Global
 
-namespace TUtils
+namespace TUtils.Common
 {
 	/// <summary>
 	/// Represents an object, which is bound to the current thread.
@@ -56,7 +57,7 @@ namespace TUtils
 	///		thread=2 id=ID2 a1=1
 	/// ]]></code></example>
 	/// </remarks>
-	/// <typeparam name="CLASSTYPE">
+	/// <typeparam name="TClasstype">
 	/// Must be a class type with a default constructor.
 	/// If you want to bind a single int or a struct to a thread you may also 
 	/// try to use class 'BoxedObject'.
@@ -66,11 +67,12 @@ namespace TUtils
 	/// ]]>
 	/// </code>
 	/// </typeparam>
-	public class TThreadStorage<CLASSTYPE> where  CLASSTYPE: class, new()
+	// ReSharper disable once InconsistentNaming
+	public class TThreadStorage<TClasstype> where  TClasstype: class, new()
 	{
-		public string Identifier { get; private set; }
+		public string Identifier { get; }
 
-		private CLASSTYPE cachedValue;
+		private TClasstype _cachedValue;
 
 		/// <summary>
 		/// constructor
@@ -90,22 +92,22 @@ namespace TUtils
 		/// Caches the object in this instance.
 		/// </remarks>
 		/// <returns></returns>
-		public CLASSTYPE GetData()
+		public TClasstype GetData()
 		{
-			if (cachedValue == null)
+			if (_cachedValue == null)
 			{
 				var threadDataSlot = Thread.GetNamedDataSlot(Identifier);
 				object obj = Thread.GetData(threadDataSlot);
 				if (obj == null)
 				{
-					obj = new CLASSTYPE();
+					obj = new TClasstype();
 					Thread.SetData(threadDataSlot, obj);
 				}
 
-				cachedValue = (CLASSTYPE)obj;
+				_cachedValue = (TClasstype)obj;
 			}
 
-			return cachedValue;
+			return _cachedValue;
 		}
 
 		/// <summary>
@@ -115,20 +117,10 @@ namespace TUtils
 		/// </summary>
 		/// <param name="identifier"></param>
 		/// <returns></returns>
-		public static CLASSTYPE GetData(string identifier)
+		public static TClasstype GetData(string identifier)
 		{
-			var storage = new TThreadStorage<CLASSTYPE>(identifier);
+			var storage = new TThreadStorage<TClasstype>(identifier);
 			return storage.GetData();
 		}
 	}
-
-	public class BoxedObject<INTRINSICTYPE>
-	{
-		public INTRINSICTYPE Value { get; set; }
-
-		public BoxedObject()
-		{
-		}
-	}
-
 }

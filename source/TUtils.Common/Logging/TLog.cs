@@ -12,14 +12,24 @@ using TUtils.Common.Logging.Common;
 namespace TUtils.Common.Logging
 {
 	/// <summary>
-	/// 
+	/// TLog is the recommended implementation of ITLog, but is independent of the 
+	/// underlying logging technology. With TLog you may use log4Net as well as any other technology to
+	/// write the concrete logging statements.
+	/// TLog needs to be initialized with a concrete log writer implementing the interface ILogWriter.
+	/// There are two suggested implementations of ILogWriter shipped with this library: Log4NetWriter and 
+	/// LogMoc. Usage:
+	/// <example>
+	/// <code><![CDATA[
+	/// ITLog logger = new TLog(new Log4NetWriter(),isLoggingOfMethodNameActivated:false);
+	/// logger.LogInfo(this,"myComplexObject={0} !",()=>myComplexObject.ToString());
+	/// ]]></code></example>
 	/// </summary>
 	/// <remarks>
-	/// additional features: 
-	/// you may add logging values to the thread:
-	/// SetThreadAttachedLogValue()
-	/// or you may register a value provider:
-	/// RegisterLogValueProvider()
+	/// TLog enhance the logger with the feature of thread-attached logging values.
+	/// Call SetThreadAttachedLogValue() to attach a value to the thread.
+	/// The value will be written to each log entry automatically (if the writer doesn't prevent this).
+	/// You may also register a value provider:
+	/// (see RegisterLogValueProvider())
 	/// </remarks>
 	// ReSharper disable once InconsistentNaming
 	// ReSharper disable once UnusedMember.Global
@@ -390,7 +400,7 @@ namespace TUtils.Common.Logging
 		/// </summary>
 		public bool IsLoggingOfMethodNameActivated { get; }
 
-		public ILogXImplementor LoggXImplementor { get; }
+		public ILogWriter LoggWriter { get; }
 
 		// ReSharper disable once UnusedMember.Global
 		public void RegisterLogValueProvider(ILogValueProvider provider)
@@ -403,10 +413,10 @@ namespace TUtils.Common.Logging
 		}
 
 		public TLog(
-			ILogXImplementor logXImplementor,
+			ILogWriter logWriter,
 			bool isLoggingOfMethodNameActivated)
 		{
-			LoggXImplementor = logXImplementor;
+			LoggWriter = logWriter;
 			IsLoggingOfMethodNameActivated = isLoggingOfMethodNameActivated;
 		}
 
@@ -557,7 +567,7 @@ namespace TUtils.Common.Logging
 				formattedTextParams: null);
 
 
-			return LoggXImplementor.IsActive(logValues);
+			return LoggWriter.IsActive(logValues);
 		}
 		
 		// ReSharper disable once UnusedMember.Global
@@ -642,8 +652,8 @@ namespace TUtils.Common.Logging
 				formattedText: formattedText,
 				formattedTextParams: formattedTextParams);
 
-			if (LoggXImplementor.IsActive(logValues))
-				LoggXImplementor.Write2LogFile(logValues);
+			if (LoggWriter.IsActive(logValues))
+				LoggWriter.Write2LogFile(logValues);
 		}
 		
 		#endregion

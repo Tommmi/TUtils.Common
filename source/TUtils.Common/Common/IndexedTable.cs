@@ -1,4 +1,42 @@
 ﻿
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
 
 /**************** 
@@ -7,15 +45,47 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TUtils.Common.Common;
 
 // ReSharper disable UnusedMember.Global
 
 namespace TUtils.Common
 {
+
 	/// <summary>
-	/// A set of rows, that provides performance optimzed Find-methods to it's values.
+	/// A set of tuples, that provides performance optimized Find-methods to it's values.
+	/// With "IndexedTable" you needn't waste time in programming dictionaries for 
+	/// fast access to values by different keys. "IndexedTable" will care for instantiating such
+	/// dictionaries on-the-fly. It will also keep them up to date. Do you want to use a compound
+	/// key ? Don't worry. "IndexedTable" will use coumpound hash keys automatically if neccessary.
 	/// </summary>
+	/// <remarks>
+	/// <example>
+	/// Guess you have an in-memory set of workshop registrations. One student may be registrated for 
+	/// several workshops. One workshop normally have several students.
+	/// <code><![CDATA[
+	/// var registrations = new IndexedTable<Student,Workshop>();
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop2));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop3));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student3, workshop1));
+	/// ]]></code>
+	/// Guess now you want to find all fellows of student2 without iterating slowly through all registrations.
+	/// So you need to look fast for all workshops of student2 and after that fast for all students in these workshops.
+	/// Normally you would have to program two hash maps and keep them up-to-date for every insert of a registration.
+	/// With IndexedTable you have to write only the following:
+	/// <code><![CDATA[
+	/// IEnumerable<Student> fellows = registrations
+	/// 	.FindByItem1(student2)
+	/// 	.Select(t => t.Item2) // workshop
+	/// 	.SelectMany(workshop => registrations.FindByItem2(workshop))
+	/// 	.Select(t => t.Item1)
+	///		.Where(student=>student != student2)
+	///		.Distinct(); // ==> student1
+	/// ]]></code>
+	/// 
+	/// </example>
+	/// </remarks>
 	public class IndexedTable<T1, T2> : IndexedTableBase
 	{
 		public IndexedTable()
@@ -75,6 +145,7 @@ namespace TUtils.Common
 			return Find(new object[] { null, val2 }).Select(Convert).ToList();
 		}
 		
+
 		#endregion
 
 		#region remove
@@ -102,7 +173,8 @@ namespace TUtils.Common
 		{
 			RemoveAllBy(new object[] { null, val2});
 		}
-				
+		
+		
 		#endregion
 
 		/// <summary>
@@ -122,9 +194,42 @@ namespace TUtils.Common
 		}
 	}
 
+
 	/// <summary>
-	/// A set of rows, that provides performance optimzed Find-methods to it's values.
+	/// A set of tuples, that provides performance optimized Find-methods to it's values.
+	/// With "IndexedTable" you needn't waste time in programming dictionaries for 
+	/// fast access to values by different keys. "IndexedTable" will care for instantiating such
+	/// dictionaries on-the-fly. It will also keep them up to date. Do you want to use a compound
+	/// key ? Don't worry. "IndexedTable" will use coumpound hash keys automatically if neccessary.
 	/// </summary>
+	/// <remarks>
+	/// <example>
+	/// Guess you have an in-memory set of workshop registrations. One student may be registrated for 
+	/// several workshops. One workshop normally have several students.
+	/// <code><![CDATA[
+	/// var registrations = new IndexedTable<Student,Workshop>();
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop2));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop3));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student3, workshop1));
+	/// ]]></code>
+	/// Guess now you want to find all fellows of student2 without iterating slowly through all registrations.
+	/// So you need to look fast for all workshops of student2 and after that fast for all students in these workshops.
+	/// Normally you would have to program two hash maps and keep them up-to-date for every insert of a registration.
+	/// With IndexedTable you have to write only the following:
+	/// <code><![CDATA[
+	/// IEnumerable<Student> fellows = registrations
+	/// 	.FindByItem1(student2)
+	/// 	.Select(t => t.Item2) // workshop
+	/// 	.SelectMany(workshop => registrations.FindByItem2(workshop))
+	/// 	.Select(t => t.Item1)
+	///		.Where(student=>student != student2)
+	///		.Distinct(); // ==> student1
+	/// ]]></code>
+	/// 
+	/// </example>
+	/// </remarks>
 	public class IndexedTable<T1, T2, T3> : IndexedTableBase
 	{
 		public IndexedTable()
@@ -215,6 +320,7 @@ namespace TUtils.Common
 			return Find(new object[] { null, null, val3 }).Select(Convert).ToList();
 		}
 		
+
 		#endregion
 
 		#region remove
@@ -270,7 +376,8 @@ namespace TUtils.Common
 		{
 			RemoveAllBy(new object[] { null, null, val3});
 		}
-				
+		
+		
 		#endregion
 
 		/// <summary>
@@ -290,9 +397,42 @@ namespace TUtils.Common
 		}
 	}
 
+
 	/// <summary>
-	/// A set of rows, that provides performance optimzed Find-methods to it's values.
+	/// A set of tuples, that provides performance optimized Find-methods to it's values.
+	/// With "IndexedTable" you needn't waste time in programming dictionaries for 
+	/// fast access to values by different keys. "IndexedTable" will care for instantiating such
+	/// dictionaries on-the-fly. It will also keep them up to date. Do you want to use a compound
+	/// key ? Don't worry. "IndexedTable" will use coumpound hash keys automatically if neccessary.
 	/// </summary>
+	/// <remarks>
+	/// <example>
+	/// Guess you have an in-memory set of workshop registrations. One student may be registrated for 
+	/// several workshops. One workshop normally have several students.
+	/// <code><![CDATA[
+	/// var registrations = new IndexedTable<Student,Workshop>();
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop2));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop3));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student3, workshop1));
+	/// ]]></code>
+	/// Guess now you want to find all fellows of student2 without iterating slowly through all registrations.
+	/// So you need to look fast for all workshops of student2 and after that fast for all students in these workshops.
+	/// Normally you would have to program two hash maps and keep them up-to-date for every insert of a registration.
+	/// With IndexedTable you have to write only the following:
+	/// <code><![CDATA[
+	/// IEnumerable<Student> fellows = registrations
+	/// 	.FindByItem1(student2)
+	/// 	.Select(t => t.Item2) // workshop
+	/// 	.SelectMany(workshop => registrations.FindByItem2(workshop))
+	/// 	.Select(t => t.Item1)
+	///		.Where(student=>student != student2)
+	///		.Distinct(); // ==> student1
+	/// ]]></code>
+	/// 
+	/// </example>
+	/// </remarks>
 	public class IndexedTable<T1, T2, T3, T4> : IndexedTableBase
 	{
 		public IndexedTable()
@@ -442,6 +582,7 @@ namespace TUtils.Common
 			return Find(new object[] { null, null, null, val4 }).Select(Convert).ToList();
 		}
 		
+
 		#endregion
 
 		#region remove
@@ -553,7 +694,8 @@ namespace TUtils.Common
 		{
 			RemoveAllBy(new object[] { null, null, null, val4});
 		}
-				
+		
+		
 		#endregion
 
 		/// <summary>
@@ -573,9 +715,42 @@ namespace TUtils.Common
 		}
 	}
 
+
 	/// <summary>
-	/// A set of rows, that provides performance optimzed Find-methods to it's values.
+	/// A set of tuples, that provides performance optimized Find-methods to it's values.
+	/// With "IndexedTable" you needn't waste time in programming dictionaries for 
+	/// fast access to values by different keys. "IndexedTable" will care for instantiating such
+	/// dictionaries on-the-fly. It will also keep them up to date. Do you want to use a compound
+	/// key ? Don't worry. "IndexedTable" will use coumpound hash keys automatically if neccessary.
 	/// </summary>
+	/// <remarks>
+	/// <example>
+	/// Guess you have an in-memory set of workshop registrations. One student may be registrated for 
+	/// several workshops. One workshop normally have several students.
+	/// <code><![CDATA[
+	/// var registrations = new IndexedTable<Student,Workshop>();
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop2));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop3));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student3, workshop1));
+	/// ]]></code>
+	/// Guess now you want to find all fellows of student2 without iterating slowly through all registrations.
+	/// So you need to look fast for all workshops of student2 and after that fast for all students in these workshops.
+	/// Normally you would have to program two hash maps and keep them up-to-date for every insert of a registration.
+	/// With IndexedTable you have to write only the following:
+	/// <code><![CDATA[
+	/// IEnumerable<Student> fellows = registrations
+	/// 	.FindByItem1(student2)
+	/// 	.Select(t => t.Item2) // workshop
+	/// 	.SelectMany(workshop => registrations.FindByItem2(workshop))
+	/// 	.Select(t => t.Item1)
+	///		.Where(student=>student != student2)
+	///		.Distinct(); // ==> student1
+	/// ]]></code>
+	/// 
+	/// </example>
+	/// </remarks>
 	public class IndexedTable<T1, T2, T3, T4, T5> : IndexedTableBase
 	{
 		public IndexedTable()
@@ -840,6 +1015,7 @@ namespace TUtils.Common
 			return Find(new object[] { null, null, null, null, val5 }).Select(Convert).ToList();
 		}
 		
+
 		#endregion
 
 		#region remove
@@ -1063,7 +1239,8 @@ namespace TUtils.Common
 		{
 			RemoveAllBy(new object[] { null, null, null, null, val5});
 		}
-				
+		
+		
 		#endregion
 
 		/// <summary>
@@ -1083,9 +1260,42 @@ namespace TUtils.Common
 		}
 	}
 
+
 	/// <summary>
-	/// A set of rows, that provides performance optimzed Find-methods to it's values.
+	/// A set of tuples, that provides performance optimized Find-methods to it's values.
+	/// With "IndexedTable" you needn't waste time in programming dictionaries for 
+	/// fast access to values by different keys. "IndexedTable" will care for instantiating such
+	/// dictionaries on-the-fly. It will also keep them up to date. Do you want to use a compound
+	/// key ? Don't worry. "IndexedTable" will use coumpound hash keys automatically if neccessary.
 	/// </summary>
+	/// <remarks>
+	/// <example>
+	/// Guess you have an in-memory set of workshop registrations. One student may be registrated for 
+	/// several workshops. One workshop normally have several students.
+	/// <code><![CDATA[
+	/// var registrations = new IndexedTable<Student,Workshop>();
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop2));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop3));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student3, workshop1));
+	/// ]]></code>
+	/// Guess now you want to find all fellows of student2 without iterating slowly through all registrations.
+	/// So you need to look fast for all workshops of student2 and after that fast for all students in these workshops.
+	/// Normally you would have to program two hash maps and keep them up-to-date for every insert of a registration.
+	/// With IndexedTable you have to write only the following:
+	/// <code><![CDATA[
+	/// IEnumerable<Student> fellows = registrations
+	/// 	.FindByItem1(student2)
+	/// 	.Select(t => t.Item2) // workshop
+	/// 	.SelectMany(workshop => registrations.FindByItem2(workshop))
+	/// 	.Select(t => t.Item1)
+	///		.Where(student=>student != student2)
+	///		.Distinct(); // ==> student1
+	/// ]]></code>
+	/// 
+	/// </example>
+	/// </remarks>
 	public class IndexedTable<T1, T2, T3, T4, T5, T6> : IndexedTableBase
 	{
 		public IndexedTable()
@@ -1577,6 +1787,7 @@ namespace TUtils.Common
 			return Find(new object[] { null, null, null, null, null, val6 }).Select(Convert).ToList();
 		}
 		
+
 		#endregion
 
 		#region remove
@@ -2024,7 +2235,8 @@ namespace TUtils.Common
 		{
 			RemoveAllBy(new object[] { null, null, null, null, null, val6});
 		}
-				
+		
+		
 		#endregion
 
 		/// <summary>
@@ -2044,9 +2256,42 @@ namespace TUtils.Common
 		}
 	}
 
+
 	/// <summary>
-	/// A set of rows, that provides performance optimzed Find-methods to it's values.
+	/// A set of tuples, that provides performance optimized Find-methods to it's values.
+	/// With "IndexedTable" you needn't waste time in programming dictionaries for 
+	/// fast access to values by different keys. "IndexedTable" will care for instantiating such
+	/// dictionaries on-the-fly. It will also keep them up to date. Do you want to use a compound
+	/// key ? Don't worry. "IndexedTable" will use coumpound hash keys automatically if neccessary.
 	/// </summary>
+	/// <remarks>
+	/// <example>
+	/// Guess you have an in-memory set of workshop registrations. One student may be registrated for 
+	/// several workshops. One workshop normally have several students.
+	/// <code><![CDATA[
+	/// var registrations = new IndexedTable<Student,Workshop>();
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student1, workshop2));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop1));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student2, workshop3));
+	/// registrations.Insert(new Tuple<Student,Workshop>(student3, workshop1));
+	/// ]]></code>
+	/// Guess now you want to find all fellows of student2 without iterating slowly through all registrations.
+	/// So you need to look fast for all workshops of student2 and after that fast for all students in these workshops.
+	/// Normally you would have to program two hash maps and keep them up-to-date for every insert of a registration.
+	/// With IndexedTable you have to write only the following:
+	/// <code><![CDATA[
+	/// IEnumerable<Student> fellows = registrations
+	/// 	.FindByItem1(student2)
+	/// 	.Select(t => t.Item2) // workshop
+	/// 	.SelectMany(workshop => registrations.FindByItem2(workshop))
+	/// 	.Select(t => t.Item1)
+	///		.Where(student=>student != student2)
+	///		.Distinct(); // ==> student1
+	/// ]]></code>
+	/// 
+	/// </example>
+	/// </remarks>
 	public class IndexedTable<T1, T2, T3, T4, T5, T6, T7> : IndexedTableBase
 	{
 		public IndexedTable()
@@ -2989,6 +3234,7 @@ namespace TUtils.Common
 			return Find(new object[] { null, null, null, null, null, null, val7 }).Select(Convert).ToList();
 		}
 		
+
 		#endregion
 
 		#region remove
@@ -3884,7 +4130,8 @@ namespace TUtils.Common
 		{
 			RemoveAllBy(new object[] { null, null, null, null, null, null, val7});
 		}
-				
+		
+		
 		#endregion
 
 		/// <summary>
@@ -3903,6 +4150,7 @@ namespace TUtils.Common
 			return Find(new object[] { val1, val2, val3, val4, val5, val6, val7 }).Select(Convert).ToList().Any();
 		}
 	}
+
 
 }
  

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using TUtils.Common.Logging.Common;
 
-namespace TUtils.Common.Logging.Common
+namespace TUtils.Common.Logging.LogMocs
 {
-	/// <summary>
-	/// Interface zu einem Logging-Service
-	/// </summary>
-	public interface ILogXImplementor
+	// ReSharper disable once UnusedMember.Global
+	public class LogMocWriter : ILogWriter
 	{
 		/// <summary>
 		/// True, if the log entry should be logged.
@@ -24,13 +23,19 @@ namespace TUtils.Common.Logging.Common
 		/// Value: An object, which implements interface "ILogValue".
 		/// </param>
 		/// <returns></returns>
-		bool IsActive(Dictionary<Guid, ILogValue> logValues);
+		public bool IsActive(Dictionary<Guid, ILogValue> logValues)
+		{
+			return false;
+		}
 
 		///  <summary>
 		///  Schreibt die Ausgabe in das Log. 
 		///  ErrorLevel und logCaregory werden nicht geprüft.
 		///  Wird nur aufgerufen, wenn IsActive(..) true zurückgibt.
 		///  </summary>
-		void Write2LogFile(Dictionary<Guid, ILogValue> logValues);
+		public void Write2LogFile(Dictionary<Guid, ILogValue> logValues)
+		{
+			
+		}
 	}
 }

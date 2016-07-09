@@ -43,6 +43,7 @@ namespace TUtils.Common.Reflection
 		/// 
 		/// </summary>
 		/// <param name="rootAssemblies">
+		/// starts searching for assemblies from each assembly listed in rootAssemblies.
 		/// if null, the method assumes Assembly.GetEntryAssembly()
 		/// </param>
 		/// <param name="onType"></param>
@@ -57,6 +58,15 @@ namespace TUtils.Common.Reflection
 			}
 		}
 
+		/// <summary>
+		/// Calls "onType(type)" on each type, which has attribute "attributeType".
+		/// </summary>
+		/// <param name="rootAssemblies">
+		/// starts searching for assemblies from each assembly listed in rootAssemblies.
+		/// if null, the method assumes Assembly.GetEntryAssembly()
+		/// </param>
+		/// <param name="attributeType"></param>
+		/// <param name="onType"></param>
 		public static void DoForAllTypesOfAllAssemblies(List<Assembly> rootAssemblies, Type attributeType, Action<Type> onType)
 		{
 			foreach (var assembly in GetAllAssemblies(rootAssemblies))
