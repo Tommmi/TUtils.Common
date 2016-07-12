@@ -8,8 +8,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TUtils.Common.Test", "TUtils.Common.Test\TUtils.Common.Test.csproj", "{DEA242BF-456F-4B51-AF83-EE7B768BB1A0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1BBD7251-93BD-40C3-903B-42356E336DBF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{106DCEBC-6935-48E8-A9EA-A3DC9DF207B0}"
 	ProjectSection(SolutionItems) = preProject
-		..\LICENSE = ..\LICENSE
+		..\documentation\history.md = ..\documentation\history.md
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject

@@ -97,7 +97,6 @@
     <Compile Include="Logging\ITLog.cs" />
     <Compile Include="Logging\Log4Net\Log4NetWriter.cs" />
     <Compile Include="Logging\Common\LoggingValueID.cs" />
-    <Compile Include="Logging\Common\LoggingValueIDAttribute.cs" />
     <Compile Include="Logging\LogMocs\LogConsoleWriter.cs" />
     <Compile Include="Logging\LogMocs\LogMocWriter.cs" />
     <Compile Include="Logging\Common\LogSeverityEnum.cs" />

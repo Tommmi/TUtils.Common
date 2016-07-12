@@ -10,27 +10,55 @@ namespace TUtils.Common.Logging.Common
 	{
 		/// <summary>
 		/// True, if the log entry should be logged.
-		/// logValues[PredefinedLoggingValueIDs.LoggingText] won't exist for 
-		/// IsActive.
+		/// Typically an implementation will check the value logValues[PredefinedLoggingValueIDs.Namespace]
+		/// and logValues[PredefinedLoggingValueIDs.Severity] for this purpose.
+		/// <example><code><![CDATA[
+		/// public bool IsActive(Dictionary<Guid, ILogValue> logValues)
+		/// {
+		/// 	ILogValue logValue;
+		/// 
+		/// 	if (!logValues.TryGetValue(PredefinedLoggingValueIDs.Severity.Guid, out logValue))
+		/// 		return false;
+		/// 	var severityText = logValue.Value;
+		/// 	var severity = LogSeverityEnum.INFO;
+		/// 	if (!Enum.TryParse(severityText, true, out severity))
+		/// 		return false;
+		/// 	if (!IsSeverityActive(severity)) // check your self
+		/// 		return false;
+		/// 
+		/// 	if (!logValues.TryGetValue(PredefinedLoggingValueIDs.Namespace.Guid, out logValue))
+		/// 		return false;
+		/// 	var namespaceText = logValue.Value;
+		/// 	if (!IsNamespaceActive(namespaceText)) // check your self
+		/// 		return false;
+		/// 
+		/// 	return true;
+		/// }
+		/// ]]></code>
+		/// </example>
 		/// </summary>
 		/// <param name="logValues">
-		/// The filterable values, which are about to be logged now.
-		/// For example the the thread id, the namespace where logging was caused
-		/// and so on are filterable.
-		/// logValues is a map:
-		/// Key: catogory of the logged value. There are following
-		///      Guids predefined: see all Guids, which has attribute "LoggingFilterableValueAttribute".
-		///		 For example class "PredefinedLoggingValueIDs".
-		/// Value: An object, which implements interface "ILogValue".
+		/// A map of values, which are about to be logged now.
+		/// guid of value category -> concrete value
+		/// See class PredefinedLoggingValueIDs for all predefined categories.
+		/// Note ! Due to performance issues there are only filterable log values inserted into the 
+		/// map: (ILoggingValueKey.IsFiterable is set to true)
+		/// - PredefinedLoggingValueIDs.Severity
+		/// - PredefinedLoggingValueIDs.Namespace
+		/// That means that these value categories could be part of a logging filter.
 		/// </param>
 		/// <returns></returns>
 		bool IsActive(Dictionary<Guid, ILogValue> logValues);
 
 		///  <summary>
-		///  Schreibt die Ausgabe in das Log. 
-		///  ErrorLevel und logCaregory werden nicht geprüft.
-		///  Wird nur aufgerufen, wenn IsActive(..) true zurückgibt.
+		///  Writes log entry into log.
+		///  Will be called only if IsActive(..) returns true;
 		///  </summary>
+		/// <param name="logValues">
+		/// A map of values, which are about to be logged now.
+		/// guid of value category -> concrete value
+		/// See class PredefinedLoggingValueIDs for all predefined categories.
+		/// </param>
 		void Write2LogFile(Dictionary<Guid, ILogValue> logValues);
 	}
 }

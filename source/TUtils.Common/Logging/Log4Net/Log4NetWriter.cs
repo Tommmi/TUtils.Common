@@ -13,8 +13,10 @@ namespace TUtils.Common.Logging.Log4Net
 {
 	public class Log4NetWriter : ILogWriter
 	{
-		private readonly Dictionary<string, ILog> _mapLogger = new Dictionary<string, ILog>();
+		#region static
+
 		private static readonly object _syncObj;
+
 		/// <summary>
 		/// list of known log value keys
 		/// </summary>
@@ -56,6 +58,16 @@ namespace TUtils.Common.Logging.Log4Net
 			}
 		}
 
+		#endregion
+
+		#region fields
+
+		private readonly Dictionary<string, ILog> cachedLoggers = new Dictionary<string, ILog>();
+
+		#endregion
+
+		#region private
+
 		private bool TryGetValue(Dictionary<Guid, ILogValue> logValues, ILoggingValueKey key, out string value)
 		{
 			ILogValue logValue;
@@ -73,9 +85,9 @@ namespace TUtils.Common.Logging.Log4Net
 			lock (_syncObj)
 			{
 				ILog logger;
-				if (_mapLogger == null)
+				if (cachedLoggers == null)
 					throw new NullReferenceException("jdnf83gog3589");
-				if (!_mapLogger.TryGetValue(category, out logger))
+				if (!cachedLoggers.TryGetValue(category, out logger))
 				{
 					logger = LogManager.GetLogger(category);
 					if (category.IsNullOrEmpty())
@@ -83,7 +95,7 @@ namespace TUtils.Common.Logging.Log4Net
 					if (logger == null)
 						throw new NullReferenceException("js83tahdueks7eg");
 
-					_mapLogger[category] = logger;
+					cachedLoggers[category] = logger;
 				}
 				return logger;
 			}
@@ -109,33 +121,6 @@ namespace TUtils.Common.Logging.Log4Net
 			if (logger == null)
 				return false;
 			return true;
-		}
-
-		bool ILogWriter.IsActive(Dictionary<Guid, ILogValue> logValues)
-		{
-			string category;
-			LogSeverityEnum severity;
-			ILog logger;
-			if (!GetLoggerCategoryAndSeverity(
-				logValues,
-				out severity,
-				out category,
-				out logger))
-			{
-				return false;
-			}
-
-			switch (severity)
-			{
-				case LogSeverityEnum.ERROR:
-					return logger.IsErrorEnabled;
-				case LogSeverityEnum.WARNING:
-					return logger.IsWarnEnabled;
-				case LogSeverityEnum.INFO:
-					return logger.IsInfoEnabled;
-				default:
-					throw new ArgumentOutOfRangeException("jhsdf74873rn " + severity);
-			}
 		}
 
 		private string GetLogTextInExcelStyle(Dictionary<Guid, ILogValue> logValues)
@@ -178,6 +163,37 @@ namespace TUtils.Common.Logging.Log4Net
 			}
 		}
 
+		#endregion
+
+		#region ILogWriter
+
+		bool ILogWriter.IsActive(Dictionary<Guid, ILogValue> logValues)
+		{
+			string category;
+			LogSeverityEnum severity;
+			ILog logger;
+			if (!GetLoggerCategoryAndSeverity(
+				logValues,
+				out severity,
+				out category,
+				out logger))
+			{
+				return false;
+			}
+
+			switch (severity)
+			{
+				case LogSeverityEnum.ERROR:
+					return logger.IsErrorEnabled;
+				case LogSeverityEnum.WARNING:
+					return logger.IsWarnEnabled;
+				case LogSeverityEnum.INFO:
+					return logger.IsInfoEnabled;
+				default:
+					throw new ArgumentOutOfRangeException("jhsdf74873rn " + severity);
+			}
+		}
+
 		void ILogWriter.Write2LogFile(Dictionary<Guid, ILogValue> logValues)
 		{
 			string category;
@@ -192,6 +208,23 @@ namespace TUtils.Common.Logging.Log4Net
 				return;
 			}
 
+			switch (severity)
+			{
+				case LogSeverityEnum.ERROR:
+					if ( !logger.IsErrorEnabled )
+						return;
+					break;
+				case LogSeverityEnum.WARNING:
+					if (!logger.IsWarnEnabled)
+						return;
+					break;
+				case LogSeverityEnum.INFO:
+					if (!logger.IsInfoEnabled)
+						return;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException("jhsdf74873rn " + severity);
+			}
 
 			var text = GetLogTextInExcelStyle(logValues);
 
@@ -210,5 +243,7 @@ namespace TUtils.Common.Logging.Log4Net
 					throw new ArgumentOutOfRangeException("hz756ezhjgr44 " + severity);
 			}
 		}
+
+		#endregion
 	}
 }

@@ -7,7 +7,6 @@ namespace TUtils.Common.Logging.Common
 		/// <summary>
 		/// LoggingText
 		/// </summary>
-		[LoggingFilterableValue]
 		public static readonly ILoggingValueKey LoggingText = new LoggingFilterableValue().Init(
 			guid: new Guid("{3016AA40-DD5E-446F-BFC5-F44AD27B9647}"),
 			isFilterable: false,

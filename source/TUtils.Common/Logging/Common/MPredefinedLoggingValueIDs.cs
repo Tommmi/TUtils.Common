@@ -9,7 +9,6 @@ namespace TUtils.Common.Logging.Common
 		/// <summary>
 		/// ServiceName
 		/// </summary>
-		[LoggingFilterableValue]
 		public static readonly ILoggingValueKey ServiceName = new LoggingFilterableValue().Init(
 			guid: new Guid("{CC21DC6D-6D1B-493C-BFE4-D6154A797A1A}"),
 			isFilterable: false,
@@ -17,7 +16,6 @@ namespace TUtils.Common.Logging.Common
 		/// <summary>
 		/// OriginalMessageID
 		/// </summary>
-		[LoggingFilterableValue]
 		public static readonly ILoggingValueKey OriginalMessageId = new LoggingFilterableValue().Init(
 			guid: new Guid("{73E7162B-B117-43E7-AD1B-CF178EDFDEEE}"),
 			isFilterable: false,
@@ -25,7 +23,6 @@ namespace TUtils.Common.Logging.Common
 		/// <summary>
 		/// CurrentMessageID
 		/// </summary>
-		[LoggingFilterableValue]
 		public static readonly ILoggingValueKey CurrentMessageId = new LoggingFilterableValue().Init(
 			guid: new Guid("{AE752CD0-DF0C-4790-A0B2-4660DDDEF8CB}"),
 			isFilterable: false,

@@ -641,19 +641,33 @@ namespace TUtils.Common.Logging
 			params Func<object>[] formattedTextParams
 			)
 		{
-			var logValues = GetAllLogValues(
+			var fiterableLogValues = GetAllLogValues(
 				loggingInstance: loggingInstance,
 				strNamespace: strNamespace,
 				errorLevel: errorLevel,
 				e: e,
 				withStackTrace: withStackTrace,
-				justFilterableLogValues: false,
+				justFilterableLogValues: true,
+				// ReSharper disable once PossibleMultipleEnumeration
 				additionalLogValues: additionalLogValues,
 				formattedText: formattedText,
 				formattedTextParams: formattedTextParams);
 
-			if (LoggWriter.IsActive(logValues))
-				LoggWriter.Write2LogFile(logValues);
+			if (LoggWriter.IsActive(fiterableLogValues))
+			{
+				var allLogValues = GetAllLogValues(
+					loggingInstance: loggingInstance,
+					strNamespace: strNamespace,
+					errorLevel: errorLevel,
+					e: e,
+					withStackTrace: withStackTrace,
+					justFilterableLogValues: false,
+					// ReSharper disable once PossibleMultipleEnumeration
+					additionalLogValues: additionalLogValues,
+					formattedText: formattedText,
+					formattedTextParams: formattedTextParams);
+				LoggWriter.Write2LogFile(allLogValues);
+			}
 		}
 		
 		#endregion
