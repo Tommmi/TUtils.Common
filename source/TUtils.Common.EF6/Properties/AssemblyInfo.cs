@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TUtils.Common")]
+[assembly: AssemblyTitle("TUtils.Common.EF6")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TUtils.Common")]
+[assembly: AssemblyProduct("TUtils.Common.EF6")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("6958c19d-1ae9-4cae-aa25-bfe5296a5d6a")]
+[assembly: Guid("2bff13a7-6d82-48b5-8d0e-84869c5b64a0")]
 
 // Version information for an assembly consists of the following four values:
 //
