@@ -30,34 +30,37 @@ namespace TUtils.Common.EF6.Transaction.Common
 			for (int i = 0; i < 3; i++)
 			{
 				using (var dbContext = _dbContextFactory.Create())
-				using (var transaction = dbContext.Database.BeginTransaction(_isolationLevel))
 				{
-					try
+					dbContext.Database.Initialize(force:false);
+					using (var transaction = dbContext.Database.BeginTransaction(_isolationLevel))
 					{
-						action(dbContext);
-						transaction.Commit();
-						return;
-					}
-					catch (DBConcurrencyException e)
-					{
-						transaction.Rollback();
-						lastException = e;
-					}
-					catch (DbUpdateConcurrencyException e)
-					{
-						transaction.Rollback();
-						lastException = e;
-					}
-					catch (OptimisticConcurrencyException e)
-					{
-						transaction.Rollback();
-						lastException = e;
-					}
-					catch (Exception e)
-					{
-						transaction.Rollback();
-						_logger.LogException(e);
-						throw;
+						try
+						{
+							action(dbContext);
+							transaction.Commit();
+							return;
+						}
+						catch (DBConcurrencyException e)
+						{
+							transaction.Rollback();
+							lastException = e;
+						}
+						catch (DbUpdateConcurrencyException e)
+						{
+							transaction.Rollback();
+							lastException = e;
+						}
+						catch (OptimisticConcurrencyException e)
+						{
+							transaction.Rollback();
+							lastException = e;
+						}
+						catch (Exception e)
+						{
+							transaction.Rollback();
+							_logger.LogException(e);
+							throw;
+						}
 					}
 				}
 			}
