@@ -48,7 +48,7 @@ namespace TUtils.Common.Logging.LogMocs
 			if (!Enum.TryParse(severityText, true, out severity))
 				return false;
 
-			if (severity >= _minSeverity)
+			if (severity > _minSeverity)
 				return false;
 
 			if (!TryGetValue(logValues, PredefinedLoggingValueIDs.Namespace, out strNamespace))

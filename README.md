@@ -1,5 +1,6 @@
 # TUtils.Common
 TUtils.Common.dll is a basic shared .NET-library for all projects based on the open TUtils-framework.
+TUtils.Common.EF6.dll contains some useful tools with entity data framework 6
 
 ## History
 see [history](documentation/history.md)
@@ -23,6 +24,7 @@ see [history](documentation/history.md)
 | AssemblyLib       | library for searching through all assemblies            |
 | ICertificateProvider    |  everything for handling assymetric certificates - recommended implementation is new CertificateProvider()  |
 | ISymmetricCryptProvider   | everything for handling symmetric cryptography - recommended implementation is new SymmetricCryptProvider() |
+| IUniqueTimeStampCreator        | a timestamp creator which creates process-unique timestamps            |
 |        |             |
 |        |             |
 
@@ -62,3 +64,28 @@ see [history](documentation/history.md)
 | ushort, uint | ToByteArray |  |
 | double | ToInt32 |  |
 | Task | LogExceptions(ITLog logger) |  |
+
+### TUtils.Common.EF6.dll
+| Class  | Description |
+| ------ | ----------- |
+| ITransactionService<TDbContext> | provides DbContext and encapsulates actions with a transaction. |
+| TransactionService<TDbContext> | default implementation of ITransactionService |
+| IDbContextFactory<TDbContext> | factory for DbContext |
+| DbContextFactory<TDbContext> | default implementation of IDbContextFactory |
+| DbContextFactory4Unittest<TDbContext> | special implementation of IDbContextFactory for automatic component tests. **Works without configuration file app.config or web.config.** Enables programmer to run DAL-tests against SQL Server LocalDb within an unit test environment |
+|  |  |
+|  |  |
+
+
+
+
+
+
+
+
+
+
+
+
+
+

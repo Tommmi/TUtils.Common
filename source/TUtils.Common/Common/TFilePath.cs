@@ -280,6 +280,19 @@ namespace TUtils.Common
 			}
 		}
 
+		public static bool TryDeleteFile(string filePath)
+		{
+			try
+			{
+				DeleteFile(filePath);
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
 		/// <summary>
 		/// calls given delegate method for each subfile und subfolder.
 		/// </summary>

@@ -1,5 +1,7 @@
 # History of TUtils.Common
 
+## Version 1.0.1.2 - 26.07.2016
+TUtils.Common.EF6.DbContextFactory4Unittest bugfixes
 ## Version 1.0.1.1 - 23.07.2016
 TUtils.Common.EF6.DbContextFactory4Unittest added
 ## Version 1.0.1.0 - 23.07.2016
