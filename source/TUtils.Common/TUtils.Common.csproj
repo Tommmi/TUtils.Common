@@ -56,10 +56,12 @@
     <Compile Include="CommandLine\Common\CommandLineArgDefinitionBase.cs" />
     <Compile Include="CommandLine\Common\CommandLineParseResult.cs" />
     <Compile Include="CommandLine\Common\ICommandLineArg.cs" />
+    <Compile Include="Common\BoxedObject.cs" />
     <Compile Include="Common\IUniqueTimeStampCreator.cs" />
     <Compile Include="Common\TFilePath.cs" />
     <Compile Include="Common\ComparableObjectArray.cs" />
     <Compile Include="Common\UniqueTimeStampCreator.cs" />
+    <Compile Include="DependencyInjection\IDIContainer.cs" />
     <Compile Include="Extensions\ExceptionHelperSql.cs" />
     <Compile Include="Extensions\Extension.ObjectExtension.cs" />
     <Compile Include="Extensions\Extension.StringExtension.cs" />

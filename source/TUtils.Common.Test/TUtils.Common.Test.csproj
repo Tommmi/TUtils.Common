@@ -74,6 +74,7 @@
     <Compile Include="TransactionTest.cs" />
     <Compile Include="ConcurrencyTest.cs" />
     <Compile Include="LinqTest.cs" />
+    <Compile Include="ManyToManyTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TUtils.Common.EF6\TUtils.Common.EF6.csproj">

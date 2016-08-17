@@ -25,7 +25,7 @@ see [history](documentation/history.md)
 | ICertificateProvider    |  everything for handling assymetric certificates - recommended implementation is new CertificateProvider()  |
 | ISymmetricCryptProvider   | everything for handling symmetric cryptography - recommended implementation is new SymmetricCryptProvider() |
 | IUniqueTimeStampCreator        | a timestamp creator which creates process-unique timestamps            |
-|        |             |
+| IDIContainer | interface for a technology independent abstraction of a dependency injection container |
 |        |             |
 
 ### Extensions
@@ -46,6 +46,7 @@ see [history](documentation/history.md)
 | string | Right |  |
 | string | ContainsIgnoreCase |  |
 | string | Remove(pattern) |  |
+| string | RemoveController(this string obj) | removes the substring "Controller" |
 | string | TryConvertDecToLong |  |
 | string | TryConvertHexToLong |  |
 | string | ToUTF8CodedByteArray |  |
@@ -76,7 +77,22 @@ see [history](documentation/history.md)
 |  |  |
 |  |  |
 
+### TUtils.Common.MVC.dll
+#### Classes
+| Class  | Description |
+| ------ | ----------- |
+| ExtendedUnityContainer | implementation of the abstract dependency injection container interface IDIConatiner by Unity. Extends Unity by some useful methods. |
+| MustBeAuthorized | Applied to an action or a controller [MustBeAuthorized]  is an [AuthorizeAttribute] which redirects unauthorized requests to AccountController.Login(string returnUrl). Assumes there is such an action. |
+|  |  |
+|  |  |
+|  |  |
 
+#### Extensions
+| Extended Type | Extension Method | Description |
+| ------------- | ---------------- | ----------- |
+| HtmlHelper<TModel> | RenderFormGroup(model=>model.MyProperty) | creates form group |
+|  |  |  |
+|  |  |  |
 
 
 

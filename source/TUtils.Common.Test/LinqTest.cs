@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -17,32 +18,23 @@ namespace TUtils.Common.Test
 	[TestClass]
 	public class LinqTest
 	{
-		private class Address
+		public class Address
 		{
 			public int Id { get; set; }
 			public string Town { get; set; }
+			public virtual ICollection<Student> Students { get; set; }
 		}
 
-		private class Student
+		public class Student
 		{
-			public Student()
-			{
-				Courses = new HashSet<Course>();
-			}
-
 			public int Id { get; set; }
 			public string Name { get; set; }
 			public virtual Address Address { get; set; }
 			public virtual ICollection<Course> Courses { get; set; }
 		}
 
-		private class Course
+		public class Course
 		{
-			public Course()
-			{
-				Students = new HashSet<Student>();
-			}
-
 			public int Id { get; set; }
 			public string Name { get; set; }
 			public virtual ICollection<Student> Students { get; set; }
@@ -50,21 +42,95 @@ namespace TUtils.Common.Test
 
 
 
-		private class MyDbContext : DbContextBase<MyDbContext>
+		public class MyDbContext : DbContextBase<MyDbContext>
 		{
 			public MyDbContext() : base()
 			{
 				Configuration.ProxyCreationEnabled = true;
+				Configuration.LazyLoadingEnabled = true;
 			}
 			protected override void OnModelCreating(DbModelBuilder modelBuilder)
 			{
-				modelBuilder.Types().Configure(t => t.MapToStoredProcedures());
+				// modelBuilder.Types().Configure(t => t.MapToStoredProcedures());
 				base.OnModelCreating(modelBuilder);
 			}
 
 			public virtual DbSet<Student> Students { get; set; }
 			public virtual DbSet<Address> Addresses { get; set; }
 			public virtual DbSet<Course> Courses { get; set; }
+		}
+
+		[TestMethod]
+		public void TestLazyLoading()
+		{
+			ILogWriter logWriter = new LogConsoleWriter(
+				LogSeverityEnum.INFO,
+				new List<string> {"*"},
+				new List<string>());
+			ITLog logger = new TLog(logWriter, isLoggingOfMethodNameActivated: false);
+			IDbContextFactory<MyDbContext> dbContextFactory = new DbContextFactory4Unittest<MyDbContext>(nameof(TestLazyLoading));
+			ITransactionService<MyDbContext> transactionService = new TransactionService<MyDbContext>(
+				logger,
+				dbContextFactory,
+				IsolationLevel.ReadCommitted);
+
+			Address hamburg = null;
+			Address hannover = null;
+			Student student = null;
+			Course course = null;
+
+			transactionService.DoInTransaction(db =>
+			{
+				hamburg = db.Addresses.Create();
+				hamburg.Town = "Hamburg";
+				hannover = db.Addresses.Create();
+				hannover.Town = "Hannover";
+				db.Addresses.AddRange(new[] { hannover, hamburg });
+
+				course = db.Courses.Create();
+				course.Name = "English";
+				db.Courses.Add(course);
+
+				student = db.Students.Create();
+				student.Name = "Tommmi";
+				student.Address = hamburg;
+				db.Students.Add(student);
+
+				db.SaveChanges();
+			});
+
+
+			transactionService.DoInTransaction(db =>
+			{
+				student = db.Students.Find(student.Id);
+				hannover = db.Addresses.FirstOrDefault(a => a.Town == "Hannover");
+				student.Address = hannover;
+				var english = db.Courses.FirstOrDefault(c => c.Name == "English");
+				student.Courses.Add(english);
+				db.SaveChanges();
+			});
+
+			transactionService.DoInTransaction(db =>
+			{
+				student = db.Students.Find(student.Id);
+				var address = student.Address;
+				var courses = student.Courses.ToList();
+				Assert.IsTrue(address.Town == "Hannover");
+			});
+
+			transactionService.DoInTransaction(db =>
+			{
+				db.Database.Log = text => logger.LogInfo(this,text);
+				var students = (
+					from stud in db.Students
+					where stud.Courses.Any(c => c.Name == "English")
+					select stud).ToList();
+				Assert.IsTrue(students.Count == 1);
+				Assert.IsTrue(students.First().Name=="Tommmi");
+			});
+
+
+
 		}
 
 		[TestMethod]
@@ -88,8 +154,10 @@ namespace TUtils.Common.Test
 				db.Addresses.AddRange(new[] {hamburg, hannover});
 				db.SaveChanges();
 
-				var latin = new Course { Name = "Latin" };
-				var spanish = new Course { Name = "Español" };
+				var latin = db.Courses.Create();
+				latin.Name = "Latin";
+				var spanish = db.Courses.Create();
+				spanish.Name = "Español";
 				db.Courses.AddRange(new[] { latin,spanish });
 				db.SaveChanges();
 

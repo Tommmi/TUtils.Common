@@ -7,6 +7,12 @@ using TUtils.Common.Logging;
 
 namespace TUtils.Common.EF6.Transaction.Common
 {
+	internal class ThreadsDbContextType
+	{
+		public DbContext DbContext { get; set; }
+		public Guid TransactionService { get; set; }
+	}
+
 	/// <summary>
 	/// For unit test for example:
 	/// <example><code><![CDATA[
@@ -43,11 +49,34 @@ namespace TUtils.Common.EF6.Transaction.Common
 	/// </summary>
 	/// <typeparam name="TDbContext"></typeparam>
 	public class TransactionService<TDbContext> : ITransactionService<TDbContext>
-		where TDbContext : DbContext
+		where TDbContext : DbContext, new()
 	{
 		private readonly ITLog _logger;
 		private readonly IDbContextFactory<TDbContext> _dbContextFactory;
 		private readonly IsolationLevel _isolationLevel;
+		private Guid _serviceId;
+
+		private class ThreadsDbContextSafeType
+		{
+			private readonly ThreadsDbContextType _threadDbContext;
+
+			public ThreadsDbContextSafeType(ThreadsDbContextType threadDbContext)
+			{
+				_threadDbContext = threadDbContext;
+			}
+
+			public TDbContext DbContext
+			{
+				get { return _threadDbContext.DbContext as TDbContext; }
+				set { _threadDbContext.DbContext = value; }
+			}
+
+			public Guid TransactionService
+			{
+				get { return _threadDbContext.TransactionService; }
+				set { _threadDbContext.TransactionService = value; }
+			}
+		}
 
 		public TransactionService(
 			ITLog logger,
@@ -57,44 +86,73 @@ namespace TUtils.Common.EF6.Transaction.Common
 			_logger = logger;
 			_dbContextFactory = dbContextFactory;
 			_isolationLevel = isolationLevel;
+			_serviceId = Guid.NewGuid();
+		}
+
+		void ITransactionService<TDbContext>.DoWithSameDbContext(Action action)
+		{
+			DoWithSameDbContext(dbContext =>
+			{
+				action();
+				return true;
+			});
+		}
+
+		private bool DoWithSameDbContext(Func<TDbContext, bool> action)
+		{
+			var dbContext = ThreadsDbContext.DbContext;
+			bool isOuterContext = false;
+			if (dbContext == null)
+			{
+				dbContext = _dbContextFactory.Create();
+				ThreadsDbContext.DbContext = dbContext;
+				isOuterContext = true;
+			}
+
+			try
+			{
+				return action(dbContext);
+			}
+			finally
+			{
+				if (isOuterContext)
+				{
+					ThreadsDbContext.DbContext = null;
+					dbContext?.Dispose();
+				}
+			}
 		}
 
 		void ITransactionService<TDbContext>.DoInTransaction(Action<TDbContext> action)
 		{
-			(this as ITransactionService<TDbContext>).DoInTransaction(reusedContext: null, action: action, onConcurrencyException: null);
-		}
-
-		void ITransactionService<TDbContext>.DoInTransaction(TDbContext reusedContext, Action<TDbContext> action)
-		{
-			(this as ITransactionService<TDbContext>).DoInTransaction(reusedContext: reusedContext, action: action, onConcurrencyException:null);
+			(this as ITransactionService<TDbContext>).DoInTransaction(action: action, onConcurrencyException: null);
 		}
 
 		void ITransactionService<TDbContext>.DoInTransaction(
-			Action<TDbContext> action, 
-			Action onConcurrencyException)
-		{
-			(this as ITransactionService<TDbContext>).DoInTransaction(reusedContext: null, action: action, onConcurrencyException: onConcurrencyException);
-		}
-
-		void ITransactionService<TDbContext>.DoInTransaction(
-			TDbContext reusedContext, 
-			Action<TDbContext> action, 
+			Action<TDbContext> action,
 			Action onConcurrencyException)
 		{
 			Exception lastException = null;
-
-			for (int i = 0; i < 3; i++)
+			bool succeeded = false;
+			for (int i = 0; i < 3 && !succeeded; i++)
 			{
-				using (var dbContext = reusedContext ?? _dbContextFactory.Create())
+				// if transaction failed due to concurrency exception
+				if (i > 0)
 				{
-					dbContext.Database.Initialize(force: false);
+					ThreadsDbContext.DbContext = null;
+					ThreadsDbContext.DbContext?.Dispose();
+					ThreadsDbContext.DbContext = _dbContextFactory.Create();
+				}
+
+				succeeded = DoWithSameDbContext(dbContext =>
+				{
 					using (var transaction = dbContext.Database.BeginTransaction(_isolationLevel))
 					{
 						try
 						{
 							action(dbContext);
 							transaction.Commit();
-							return;
+							return true;
 						}
 						catch (DBConcurrencyException e)
 						{
@@ -117,9 +175,14 @@ namespace TUtils.Common.EF6.Transaction.Common
 							_logger.LogException(e);
 							throw;
 						}
+
+						return false;
 					}
-				}
+				});
 			}
+
+			if (succeeded)
+				return;
 
 			if (onConcurrencyException == null)
 			{
@@ -129,5 +192,21 @@ namespace TUtils.Common.EF6.Transaction.Common
 
 			onConcurrencyException();
 		}
+
+		private ThreadsDbContextSafeType ThreadsDbContext
+		{
+			get
+			{
+				var context = TThreadStorage<ThreadsDbContextType>.GetData(DbContextId);
+				if (context.TransactionService != _serviceId)
+				{
+					context.TransactionService = _serviceId;
+					context.DbContext = null;
+				}
+				return new ThreadsDbContextSafeType(context);
+			}
+		}
+
+		private const string DbContextId = "TransactionService.DbContextId";
 	}
 }

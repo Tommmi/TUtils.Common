@@ -128,6 +128,16 @@ namespace TUtils.Common.Extensions
 			return obj != null && obj.ToLower().Equals(text.ToLower());
 		}
 
+		/// <summary>
+		/// var name = "HomeController".RemoveController(); // name = "Home"
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public static string RemoveController(this string obj)
+		{
+			return obj?.Replace("Controller",string.Empty);
+		}
+
 		public static string RemoveRight(this string obj, int countCharacters)
 		{
 			int len = obj.Length;
