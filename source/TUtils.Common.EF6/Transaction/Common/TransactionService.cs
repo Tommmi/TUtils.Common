@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using TUtils.Common.Logging;
+using TUtils.Common.Transaction;
 
 namespace TUtils.Common.EF6.Transaction.Common
 {
@@ -11,6 +12,7 @@ namespace TUtils.Common.EF6.Transaction.Common
 	{
 		public DbContext DbContext { get; set; }
 		public Guid TransactionService { get; set; }
+		public bool HasTransactionBegun { get; set; }
 	}
 
 	/// <summary>
@@ -65,12 +67,19 @@ namespace TUtils.Common.EF6.Transaction.Common
 				_threadDbContext = threadDbContext;
 			}
 
+			public bool HasTransactionBegun
+			{
+				get { return _threadDbContext.HasTransactionBegun; }
+				set { _threadDbContext.HasTransactionBegun = value; }
+			}
+
 			public TDbContext DbContext
 			{
 				get { return _threadDbContext.DbContext as TDbContext; }
 				set { _threadDbContext.DbContext = value; }
 			}
 
+			// ReSharper disable once UnusedMember.Local
 			public Guid TransactionService
 			{
 				get { return _threadDbContext.TransactionService; }
@@ -89,28 +98,28 @@ namespace TUtils.Common.EF6.Transaction.Common
 			_serviceId = Guid.NewGuid();
 		}
 
-		void ITransactionService<TDbContext>.DoWithSameDbContext(Action action)
+		void ITransactionService.DoWithSameDbContext(Action action)
 		{
 			DoWithSameDbContext(dbContext =>
 			{
 				action();
-				return true;
+				return new Tuple<bool,int>(true,0);
 			});
 		}
 
-		private bool DoWithSameDbContext(Func<TDbContext, bool> action)
+		private Tuple<bool, T> DoWithSameDbContext<T>(Func<TDbContext, Tuple<bool, T>> action)
 		{
 			var dbContext = ThreadsDbContext.DbContext;
 			bool isOuterContext = false;
-			if (dbContext == null)
-			{
-				dbContext = _dbContextFactory.Create();
-				ThreadsDbContext.DbContext = dbContext;
-				isOuterContext = true;
-			}
-
 			try
 			{
+				if (dbContext == null)
+				{
+					dbContext = _dbContextFactory.Create();
+					ThreadsDbContext.DbContext = dbContext;
+					isOuterContext = true;
+				}
+
 				return action(dbContext);
 			}
 			finally
@@ -132,8 +141,52 @@ namespace TUtils.Common.EF6.Transaction.Common
 			Action<TDbContext> action,
 			Action onConcurrencyException)
 		{
+			(this as ITransactionService<TDbContext>).DoInTransaction(
+				db =>
+				{
+					action(db);
+					return 0;
+				},
+				onConcurrencyException);
+		}
+
+		T ITransactionService.DoWithSameDbContext<T>(Func<T> action)
+		{
+			return DoWithSameDbContext(dbContext =>
+			{
+				var resultVal = action();
+				return new Tuple<bool, T>(true, resultVal);
+			}).Item2;
+		}
+
+		void ITransactionService.DoInTransaction(Action action)
+		{
+			(this as ITransactionService<TDbContext>).DoInTransaction(db =>
+			{
+				action();
+			});
+		}
+
+		T ITransactionService.DoInTransaction<T>(Func<T> action)
+		{
+			return (this as ITransactionService<TDbContext>).DoInTransaction(
+				db => action());
+		}
+
+		T ITransactionService<TDbContext>.DoInTransaction<T>(Func<TDbContext, T> action)
+		{
+			return (this as ITransactionService<TDbContext>).DoInTransaction(
+				action,onConcurrencyException:null);
+		}
+
+		T ITransactionService<TDbContext>.DoInTransaction<T>(Func<TDbContext, T> action, Action onConcurrencyException)
+		{
+			if (ThreadsDbContext.HasTransactionBegun)
+				return DoWithSameDbContext(dbContext => new Tuple<bool, T>(true, action(dbContext))).Item2;
+
 			Exception lastException = null;
 			bool succeeded = false;
+			var returnVal = default(T);
 			for (int i = 0; i < 3 && !succeeded; i++)
 			{
 				// if transaction failed due to concurrency exception
@@ -144,45 +197,53 @@ namespace TUtils.Common.EF6.Transaction.Common
 					ThreadsDbContext.DbContext = _dbContextFactory.Create();
 				}
 
-				succeeded = DoWithSameDbContext(dbContext =>
+				var result = DoWithSameDbContext(dbContext =>
 				{
-					using (var transaction = dbContext.Database.BeginTransaction(_isolationLevel))
+					try
 					{
-						try
+						using (var transaction = dbContext.Database.BeginTransaction(_isolationLevel))
 						{
-							action(dbContext);
-							transaction.Commit();
-							return true;
-						}
-						catch (DBConcurrencyException e)
-						{
-							transaction.Rollback();
-							lastException = e;
-						}
-						catch (DbUpdateConcurrencyException e)
-						{
-							transaction.Rollback();
-							lastException = e;
-						}
-						catch (OptimisticConcurrencyException e)
-						{
-							transaction.Rollback();
-							lastException = e;
-						}
-						catch (Exception e)
-						{
-							transaction.Rollback();
-							_logger.LogException(e);
-							throw;
-						}
+							ThreadsDbContext.HasTransactionBegun = true;
 
-						return false;
+							try
+							{
+								returnVal = action(dbContext);
+								transaction.Commit();
+								return new Tuple<bool, T>(true, returnVal);
+							}
+							catch (DBConcurrencyException e)
+							{
+								lastException = Rollback(e, transaction);
+							}
+							catch (DbUpdateConcurrencyException e)
+							{
+								lastException = Rollback(e, transaction);
+							}
+							catch (OptimisticConcurrencyException e)
+							{
+								lastException = Rollback(e, transaction);
+							}
+							catch (Exception e)
+							{
+								lastException = Rollback(e, transaction);
+								_logger.LogException(e);
+								throw;
+							}
+
+							return new Tuple<bool, T>(false, default(T));
+						}
+					}
+					finally
+					{
+						ThreadsDbContext.HasTransactionBegun = false;
 					}
 				});
+
+				succeeded = result.Item1;
 			}
 
 			if (succeeded)
-				return;
+				return returnVal;
 
 			if (onConcurrencyException == null)
 			{
@@ -191,6 +252,22 @@ namespace TUtils.Common.EF6.Transaction.Common
 			}
 
 			onConcurrencyException();
+			return returnVal;
+		}
+
+		private Exception Rollback(Exception e, DbContextTransaction transaction)
+		{
+			Exception lastException = null;
+			try
+			{
+				lastException = e;
+				transaction.Rollback();
+			}
+			catch (Exception e2)
+			{
+				_logger.LogException(e2);
+			}
+			return lastException;
 		}
 
 		private ThreadsDbContextSafeType ThreadsDbContext

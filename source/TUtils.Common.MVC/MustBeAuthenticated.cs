@@ -6,7 +6,8 @@ using TUtils.Common.Extensions;
 namespace TUtils.Common.MVC
 {
 	/// <summary>
-	/// Applied to an action or a controller [MustBeAuthorized]  is an [AuthorizeAttribute]
+	/// Applied to an action or a controller
+	/// [MustBeAuthorized]  is an [AuthorizeAttribute]
 	/// which redirects unauthorized requests to AccountController.Login(string returnUrl).
 	/// Assumes there is such an action.
 	/// requirements:

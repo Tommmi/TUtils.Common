@@ -15,6 +15,7 @@ using System.Data.Entity;
 using System.Linq.Expressions;
 using LinqKit;
 using TUtils.Common.Common;
+using TUtils.Common.Transaction;
 
 namespace TUtils.Common.Test
 {

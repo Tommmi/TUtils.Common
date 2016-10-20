@@ -139,13 +139,22 @@ namespace TUtils.Common.Extensions
 		/// <summary>
 		/// converts Base64 string into original byte array
 		/// </summary>
-		/// <param name="base64String"></param>
+		/// <param name="base64String">
+		/// characters a-z,A-Z,+,/,=
+		/// </param>
 		/// <returns></returns>
 		public static byte[] ToByteArrayFromBase64String(this string base64String)
 		{
 			return Convert.FromBase64String(base64String);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="bytes"></param>
+		/// <returns>
+		/// characters a-z,A-Z,+,/,=
+		/// </returns>
 		public static string ToBase64String(this byte[] bytes)
 		{
 			return Convert.ToBase64String(bytes);

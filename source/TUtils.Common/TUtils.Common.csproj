@@ -30,9 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\external\Log4Net\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -61,10 +61,13 @@
     <Compile Include="Common\TFilePath.cs" />
     <Compile Include="Common\ComparableObjectArray.cs" />
     <Compile Include="Common\UniqueTimeStampCreator.cs" />
+    <Compile Include="Common\Debouncer.cs" />
     <Compile Include="DependencyInjection\IDIContainer.cs" />
+    <Compile Include="DependencyInjection\ILazy.cs" />
+    <Compile Include="DependencyInjection\Lazy.cs" />
     <Compile Include="Extensions\ExceptionHelperSql.cs" />
     <Compile Include="Extensions\Extension.ObjectExtension.cs" />
-    <Compile Include="Extensions\Extension.StringExtension.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Extensions\EnumerableExtension.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Async\AsyncEvent.cs" />
@@ -77,6 +80,7 @@
       <DependentUpon>IndexedTable.tt</DependentUpon>
     </Compile>
     <Compile Include="Common\IndexedTableBase.cs" />
+    <Compile Include="Common\IDebouncer.cs" />
     <Compile Include="Reflection\AssemblyLib.cs" />
     <Compile Include="Security\Asymmetric\RSACryptoServiceProvider\CertificateVerifier.cs" />
     <Compile Include="Security\Asymmetric\Common\ICertificateVerifier.cs" />
@@ -128,8 +132,12 @@
     <Compile Include="Security\Symmetric\Common\SymmetricSecret.cs" />
     <Compile Include="Common\SystemTimeProvider.cs" />
     <Compile Include="Common\TThreadStorage.cs" />
+    <Compile Include="Transaction\ITransactionService.cs" />
     <None Include="Common\TemplateFileManager.CS.ttinclude" />
     <None Include="Common\THelper.ttinclude" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="postbuild.bat" />
   </ItemGroup>
   <ItemGroup>

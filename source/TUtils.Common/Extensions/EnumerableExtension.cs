@@ -7,7 +7,10 @@ namespace TUtils.Common.Extensions
 {
 	public static class EnumerableExtension
 	{
-
+		public static bool IsNotNullOrEmpty<T>(this IEnumerable<T> @this)
+		{
+			return @this != null && @this.Any();
+		}
 
 		public static T[] Append<T>(this T[] array, params T[] newObj)
 		{

@@ -12,6 +12,7 @@ using TUtils.Common.EF6.Transaction.Common;
 using TUtils.Common.Logging;
 using TUtils.Common.Logging.Common;
 using TUtils.Common.Logging.LogMocs;
+using TUtils.Common.Transaction;
 
 namespace TUtils.Common.Test
 {

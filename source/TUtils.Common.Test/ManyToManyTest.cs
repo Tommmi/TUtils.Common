@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Core.Objects;
 using System.Linq.Expressions;
 using LinqKit;
+using TUtils.Common.Transaction;
 
 namespace TUtils.Common.Test
 {

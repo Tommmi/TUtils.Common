@@ -1,11 +1,16 @@
 # TUtils.Common
 TUtils.Common.dll is a basic shared .NET-library for all projects based on the open TUtils-framework.
-TUtils.Common.EF6.dll contains some useful tools with entity data framework 6
+TUtils.Common.EF6.dll contains some usefull tools with entity data framework 6
+TUtils.Common.MVC.dll contains some usefull extensions for ASP.NET MVC
 
 ## History
 see [history](documentation/history.md)
 
 ## Contents
+
+### TUtils.Common.dll
+
+#### Classes and Interface
 
 | Class  | Description |
 | ------ | ----------- |
@@ -26,9 +31,16 @@ see [history](documentation/history.md)
 | ISymmetricCryptProvider   | everything for handling symmetric cryptography - recommended implementation is new SymmetricCryptProvider() |
 | IUniqueTimeStampCreator        | a timestamp creator which creates process-unique timestamps            |
 | IDIContainer | interface for a technology independent abstraction of a dependency injection container |
+| IDebouncer, Debouncer  | Debouncing means that the handler of a signal handles a signal and ignores <br>following signals for a short time afterwards. |
+| ILazy |  interface for a lazy loaded object  |
+| Lazy |  implementation of ILazy, using the general interface of a dependency injection container            |
+| ITransactionService   |             |
+|        |             |
+|        |             |
+|        |             |
 |        |             |
 
-### Extensions
+#### Extensions
 
 | Extended Type | Extension Method | Description |
 | ------------- | ---------------- | ----------- |
@@ -52,11 +64,13 @@ see [history](documentation/history.md)
 | string | ToUTF8CodedByteArray |  |
 | string | ToUnderlyingByteArray |  |
 | string | ToByteArrayFromBase64String |  |
+| string | ToInt |  |
 | int,long,string,.. | AsEnum<TEnum> |  |
 | IList | RemoveWhere |  |
 | List | SetRange |  |
 | IEnumerable | AreEquals(IEnumerable<T> enumeration) |  |
 | IEnumerable | IsNullOrEmpty |  |
+| IEnumerable | IsNotNullOrEmpty() |  |
 | Type | HasInterface(Type interfaceType) |  |
 | byte[] | AreEqual(byte[] other) |  |
 | byte[] | ConcatBytes |  |
@@ -67,6 +81,8 @@ see [history](documentation/history.md)
 | Task | LogExceptions(ITLog logger) |  |
 
 ### TUtils.Common.EF6.dll
+
+#### Classes
 | Class  | Description |
 | ------ | ----------- |
 | ITransactionService<TDbContext> | provides DbContext and encapsulates actions with a transaction. |
@@ -77,7 +93,16 @@ see [history](documentation/history.md)
 |  |  |
 |  |  |
 
+#### Extensions
+| Extended Type | Extension Method | Description |
+| ------------- | ---------------- | ----------- |
+| Entity | ApplyChanges(sourceEntity, destinationEntity, ignoredProperties) | Copies all simple properties from srcEntity to destEntity.<br>Simple properties are properties of type int, int?, string and so on.<br>They may not have attribute [NotMapped] or [Key].<br>The primary key won't be copied.<br>If there was no change, the destination entity won't be touched. |
+|  |  |  |
+|  |  |  |
+|  |  |  |
+
 ### TUtils.Common.MVC.dll
+
 #### Classes
 | Class  | Description |
 | ------ | ----------- |
@@ -85,12 +110,24 @@ see [history](documentation/history.md)
 | MustBeAuthorized | Applied to an action or a controller [MustBeAuthorized]  is an [AuthorizeAttribute] which redirects unauthorized requests to AccountController.Login(string returnUrl). Assumes there is such an action. |
 |  |  |
 |  |  |
-|  |  |
 
 #### Extensions
 | Extended Type | Extension Method | Description |
 | ------------- | ---------------- | ----------- |
 | HtmlHelper<TModel> | RenderFormGroup(model=>model.MyProperty) | creates form group |
+| HtmlHelper<TModel> | RenderConfirmationModalDlg(..) | renders a link, which rises a modal confirmation dialog |
+| HtmlHelper<TModel> | RenderMailLink | renders a link, which opens email tool presenting a pre-filled email. |
+| string | UrlEncoded |  |
+| string | UrlDecode |  |
+| byte[] | ToUrlEncodedString |  |
+| byte[] | ToBytesFromUrlEncodedString |  |
+| Uri    | GetQueryParameter(this Uri uri, string name) | Gets the value of the given query parameter |
+| Uri    | QueryParamters | gets all query parameters |
+| Uri    | RemoveQuery | removes the query part of the Uri |
+| Uri    | AddQueryParameters | Adds all passed query parameters to the Uri |
+| Uri    | RemoveQueryParameter | removes the given query parameter from Uri |
+|  |  |  |
+|  |  |  |
 |  |  |  |
 |  |  |  |
 

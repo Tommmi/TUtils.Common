@@ -25,6 +25,16 @@ namespace TUtils.Common.Extensions
 		    return text.Substring(0, text.Length - countOfCharacters);
 	    }
 
+	    public static int ToInt(this string value, int defaultValue)
+	    {
+		    if (value.IsNullOrEmpty())
+			    return defaultValue;
+		    int res;
+		    if (int.TryParse(value, out res))
+			    return res;
+			return defaultValue;
+		}
+
 		public static string ToHex(this int value)
         {
             return $"0x{value:X}";
@@ -137,6 +147,11 @@ namespace TUtils.Common.Extensions
 		{
 			return obj?.Replace("Controller",string.Empty);
 		}
+
+	    public static string RemoveWhitespaces(this string obj)
+	    {
+		    return obj.Replace(" ", string.Empty).Replace("\t", string.Empty);
+	    }
 
 		public static string RemoveRight(this string obj, int countCharacters)
 		{
