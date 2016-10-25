@@ -10,6 +10,10 @@ see [history](documentation/history.md)
 
 ### TUtils.Common.dll
 
+#### Requirements
+NuGet packages: 
+	- log4net
+
 #### Classes and Interface
 
 | Class  | Description |
@@ -82,6 +86,13 @@ see [history](documentation/history.md)
 
 ### TUtils.Common.EF6.dll
 
+#### Requirements 
+NuGet packages: 
+	- EntityFramework 
+	- System.Data.SqlClient 
+	- System.Data.SQLite.EF6 
+
+
 #### Classes
 | Class  | Description |
 | ------ | ----------- |
@@ -102,6 +113,12 @@ see [history](documentation/history.md)
 |  |  |  |
 
 ### TUtils.Common.MVC.dll
+
+#### Requirements
+NuGet packages: 
+	- Unity.Mvc
+	- Unity.Mvc5
+	- optional: Unity.WebAPI
 
 #### Classes
 | Class  | Description |
