@@ -372,6 +372,21 @@ namespace TUtils.Common.MVC
 
 		/// <summary>
 		/// renders a link, which opens email tool presenting a pre-filled email.
+		/// <example><code><![CDATA[
+		/// Html.RenderMailLink(
+		///     to: Model.InvitationMailContent.ReceipientMailAddresses,
+		///     cc: null,
+		///     bcc: null,
+		///     subject: Model.InvitationMailContent.Subject,
+		///     textBody: Model.InvitationMailContent.Body,
+		///     linkText: Resource1.Start,
+		///     htmlAttributes: new
+		///     {
+		///         @class = "btn btn-success",
+		///         target = "mailto"
+		///     });
+		/// <iframe name="mailto" src="about:blank" style="display:none;"></iframe>
+		/// ]]></code></example>
 		/// </summary>
 		/// <typeparam name="TModel"></typeparam>
 		/// <param name="html"></param>
@@ -396,7 +411,7 @@ namespace TUtils.Common.MVC
 			var ccText = cc.IsNotNullOrEmpty() ? "&cc=" + Combine<TModel>(cc) : string.Empty;
 			var bccText = bcc.IsNotNullOrEmpty() ? "&bcc=" + Combine<TModel>(bcc) : string.Empty;
 			var htmlAttributesString = GetHtmlAttributes(htmlAttributes);
-			return new MvcHtmlString($"<a {htmlAttributesString} href=\"mailto: {Combine<TModel>(to)}?subject={subject.UrlEncoded()}{ccText}{bccText}&body={textBody.UrlEncoded()}\">{linkText}</a>");
+			return new MvcHtmlString($"<a {htmlAttributesString} href=\"mailto:{Combine<TModel>(to)}?subject={subject.UrlEncoded()}{ccText}{bccText}&body={textBody.UrlEncoded()}\">{linkText}</a>");
 		}
 
 		private static string GetHtmlAttributes(object htmlAttributes)
