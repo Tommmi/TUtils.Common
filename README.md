@@ -39,7 +39,7 @@ NuGet packages:
 | ILazy |  interface for a lazy loaded object  |
 | Lazy |  implementation of ILazy, using the general interface of a dependency injection container            |
 | ITransactionService   |             |
-|        |             |
+| ISystemTimeProvider   | abstraction of system time            |
 |        |             |
 |        |             |
 |        |             |

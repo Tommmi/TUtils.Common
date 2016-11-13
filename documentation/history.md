@@ -1,5 +1,7 @@
 # History of TUtils.Common
 
+## Version 1.0.1.7 - 13.11.2016
+ISystemTimeProvider added
 ## Version 1.0.1.6 - 25.10.2016
 TUtils.Common.MVC: bugfix in HtmlExtensions.RenderMailLink
 ## Version 1.0.1.5 - 25.10.2016

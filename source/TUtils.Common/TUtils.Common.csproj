@@ -58,6 +58,7 @@
     <Compile Include="CommandLine\Common\ICommandLineArg.cs" />
     <Compile Include="Common\BoxedObject.cs" />
     <Compile Include="Common\IUniqueTimeStampCreator.cs" />
+    <Compile Include="Common\SystemTimeProviderMoc.cs" />
     <Compile Include="Common\TFilePath.cs" />
     <Compile Include="Common\ComparableObjectArray.cs" />
     <Compile Include="Common\UniqueTimeStampCreator.cs" />

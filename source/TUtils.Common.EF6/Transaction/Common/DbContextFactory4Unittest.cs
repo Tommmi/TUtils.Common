@@ -14,9 +14,38 @@ namespace TUtils.Common.EF6.Transaction.Common
 	/// 
 	/// You can examin the database file in SQL Server Object Explorer (not in Server Explorer !).
 	/// </summary>
+	/// <remarks>
+	/// </remarks>
 	/// <typeparam name="TDbContext">
-	/// Must be derived from DbContextBase and have a default constructor.
+	/// Must be derived from DbContextBase and has a default constructor.
 	/// Note ! DbContextBase has a default constructor only.
+	/// If there is a DbContext in the project allready and you have to use that DbContext,
+	/// normally that class isn't drived from DbContextBase. So in that case it is recommended
+	/// to create a second context class derived from DbContextBase and let both context classes
+	/// implement a common interface. Then all classes which need the first class should be modified
+	/// so that they need only a generic type implementing the common interface and DbContext.
+	/// <example><code><![CDATA[
+	///		interface IMyDbContext
+	/// 	{
+	/// 	    DbSet<Player> MyEntities { get; set; }
+	/// 	}
+	/// 	class MyProductiveDbContext : DbContext, IMyDbContext
+	/// 	{
+	/// 	    public virtual DbSet<Player> MyEntities { get; set; }
+	/// 	}
+	/// 	class MyTestDbContext : DbContextBase, IMyDbContext
+	/// 	{
+	/// 	    public virtual DbSet<Player> MyEntities { get; set; }
+	/// 	}
+	/// 	class MyDataAccessLayer<TDbContext>
+	///			where TDbContext: DbContext, IMyDbContext
+	///		{
+	///			public MyDataAccessLayer(TDbContext dbContext)
+	///			{
+	///				...
+	///			}
+	///		}
+	/// ]]></code></example>
 	/// </typeparam>
 	public class DbContextFactory4Unittest<TDbContext> : IDbContextFactory<TDbContext>
 		where TDbContext : DbContextBase<TDbContext>, new()
