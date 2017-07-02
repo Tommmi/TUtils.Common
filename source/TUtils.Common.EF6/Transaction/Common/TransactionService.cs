@@ -107,6 +107,15 @@ namespace TUtils.Common.EF6.Transaction.Common
 			});
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="action"></param>
+		/// <returns>
+		/// Item1: succeeded ?
+		/// Item2: result data in case of successful execution
+		/// </returns>
 		private Tuple<bool, T> DoWithSameDbContext<T>(Func<TDbContext, Tuple<bool, T>> action)
 		{
 			var dbContext = ThreadsDbContext.DbContext;

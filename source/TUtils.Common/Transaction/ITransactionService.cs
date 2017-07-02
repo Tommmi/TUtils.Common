@@ -22,7 +22,7 @@ namespace TUtils.Common.Transaction
 		T DoWithSameDbContext<T>(Func<T> action);
 
 		/// <summary>
-		/// all transactions called in "action" will run in same transactions.
+		/// all transactions called in "action" will run in same transaction.
 		/// May be nested
 		/// </summary>
 		/// <param name="action">
@@ -31,7 +31,7 @@ namespace TUtils.Common.Transaction
 		void DoInTransaction(Action action);
 
 		/// <summary>
-		/// all transactions called in "action" will run in same transactions.
+		/// all transactions called in "action" will run in same transaction.
 		/// May be nested
 		/// </summary>
 		/// <param name="action">
