@@ -78,10 +78,6 @@
       <Project>{2bff13a7-6d82-48b5-8d0e-84869c5b64a0}</Project>
       <Name>TUtils.Common.EF6</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TUtils.Common\TUtils.Common.csproj">
-      <Project>{6958c19d-1ae9-4cae-aa25-bfe5296a5d6a}</Project>
-      <Name>TUtils.Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Cert\makecert.exe" />

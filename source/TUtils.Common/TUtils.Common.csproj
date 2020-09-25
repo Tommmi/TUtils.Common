@@ -1,165 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6958C19D-1AE9-4CAE-AA25-BFE5296A5D6A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TUtils.Common</RootNamespace>
-    <AssemblyName>TUtils.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>Thomas Gerlach</Authors>
+    <Company>Thomas Gerlach</Company>
+    <Product>TUtils</Product>
+    <Copyright>2020</Copyright>
+    <RepositoryUrl>https://github.com/Tommmi/TUtils.Common</RepositoryUrl>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DEBUG_EXCEPTIONS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="CommandLine\CommandLineArgs.cs" />
-    <Compile Include="CommandLine\Common\CommandArgBase.cs" />
-    <Compile Include="CommandLine\Common\CommandArgFilePath.cs" />
-    <Compile Include="CommandLine\Common\CommandArgFolderPath.cs" />
-    <Compile Include="CommandLine\Common\CommandArgInt.cs" />
-    <Compile Include="CommandLine\Common\CommandArgKeyValue.cs" />
-    <Compile Include="CommandLine\Common\CommandArgKeyValueBase.cs" />
-    <Compile Include="CommandLine\Common\CommandArgString.cs" />
-    <Compile Include="CommandLine\Common\CommandLineArgDefinition.cs" />
-    <Compile Include="CommandLine\Common\CommandLineArgDefinitionBase.cs" />
-    <Compile Include="CommandLine\Common\CommandLineParseResult.cs" />
-    <Compile Include="CommandLine\Common\ICommandLineArg.cs" />
-    <Compile Include="Common\BoxedObject.cs" />
-    <Compile Include="Common\IUniqueTimeStampCreator.cs" />
-    <Compile Include="Common\SystemTimeProviderMoc.cs" />
-    <Compile Include="Common\TFilePath.cs" />
-    <Compile Include="Common\ComparableObjectArray.cs" />
-    <Compile Include="Common\UniqueTimeStampCreator.cs" />
-    <Compile Include="Common\Debouncer.cs" />
-    <Compile Include="DependencyInjection\IDIContainer.cs" />
-    <Compile Include="DependencyInjection\ILazy.cs" />
-    <Compile Include="DependencyInjection\Lazy.cs" />
-    <Compile Include="Extensions\ExceptionHelperSql.cs" />
-    <Compile Include="Extensions\Extension.ObjectExtension.cs" />
-    <Compile Include="Extensions\StringExtension.cs" />
-    <Compile Include="Extensions\EnumerableExtension.cs" />
-    <Compile Include="Extensions\ListExtensions.cs" />
-    <Compile Include="Async\AsyncEvent.cs" />
-    <Compile Include="Extensions\SimpleTypeExtensions.cs" />
-    <Compile Include="Extensions\StaticReflection.cs" />
-    <Compile Include="Extensions\TaskExtension.cs" />
-    <Compile Include="Common\IndexedTable.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>IndexedTable.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Common\IndexedTableBase.cs" />
-    <Compile Include="Common\IDebouncer.cs" />
-    <Compile Include="Reflection\AssemblyLib.cs" />
-    <Compile Include="Security\Asymmetric\RSACryptoServiceProvider\CertificateVerifier.cs" />
-    <Compile Include="Security\Asymmetric\Common\ICertificateVerifier.cs" />
-    <Compile Include="Security\Asymmetric\Common\VerifyResult.cs" />
-    <Compile Include="Security\Symmetric\AesCryptoServiceProvider\SymmetricCryptProvider.cs" />
-    <Compile Include="Security\Symmetric\Common\EncryptedData.cs" />
-    <Compile Include="Security\Symmetric\Common\EncryptedText.cs" />
-    <Compile Include="Security\Asymmetric\Common\CertContentBase64String.cs" />
-    <Compile Include="Security\Asymmetric\RSACryptoServiceProvider\Certificate.cs" />
-    <Compile Include="Security\Asymmetric\RSACryptoServiceProvider\CertificateProvider.cs" />
-    <Compile Include="Security\Asymmetric\Common\ICertContentBase64String.cs" />
-    <Compile Include="Security\Asymmetric\Common\ICertificate.cs" />
-    <Compile Include="Security\Asymmetric\ICertificateProvider.cs" />
-    <Compile Include="Security\Asymmetric\Common\IPrivateCertContentBase64String.cs" />
-    <Compile Include="Security\Asymmetric\Common\IPrivateCertificate.cs" />
-    <Compile Include="Security\Asymmetric\Common\IPublicCertContentBase64String.cs" />
-    <Compile Include="Security\Asymmetric\Common\IPublicCertificate.cs" />
-    <Compile Include="Common\ISystemTimeProvider.cs" />
-    <Compile Include="Logging\Common\ILoggingValueKey.cs" />
-    <Compile Include="Logging\Common\ILogValue.cs" />
-    <Compile Include="Logging\Common\ILogValueProvider.cs" />
-    <Compile Include="Logging\Common\ILogWriter.cs" />
-    <Compile Include="Logging\ITLog.cs" />
-    <Compile Include="Logging\Log4Net\Log4NetWriter.cs" />
-    <Compile Include="Logging\Common\LoggingValueID.cs" />
-    <Compile Include="Logging\LogMocs\LogConsoleWriter.cs" />
-    <Compile Include="Logging\LogMocs\LogMocWriter.cs" />
-    <Compile Include="Logging\Common\LogSeverityEnum.cs" />
-    <Compile Include="Logging\Common\LogValue.cs" />
-    <Compile Include="Logging\Common\MPredefinedLoggingValueIDs.cs" />
-    <Compile Include="Logging\Common\PredefinedLoggingValueIDs.cs" />
-    <Compile Include="Logging\TLog.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Async\AsyncThreadStarter.cs" />
-    <Compile Include="Extensions\ExceptionHelper.cs" />
-    <Compile Include="Security\Asymmetric\OpenSource\BigInteger.cs" />
-    <Compile Include="Security\Asymmetric\OpenSource\ezrsa.cs" />
-    <Compile Include="Security\Asymmetric\Common\PrivateCertContentBase64String.cs" />
-    <Compile Include="Security\Asymmetric\RSACryptoServiceProvider\PrivateCertificate.cs" />
-    <Compile Include="Security\Asymmetric\Common\PublicCertContentBase64String.cs" />
-    <Compile Include="Security\Asymmetric\RSACryptoServiceProvider\PublicCertificate.cs" />
-    <Compile Include="Security\Asymmetric\RSACryptoServiceProvider\RsaLib.cs" />
-    <Compile Include="Security\Symmetric\Common\ISymmetricCrypt.cs" />
-    <Compile Include="Security\Symmetric\ISymmetricCryptProvider.cs" />
-    <Compile Include="Security\Symmetric\Common\ISymmetricSecret.cs" />
-    <Compile Include="Security\Symmetric\Common\PlainData.cs" />
-    <Compile Include="Security\Symmetric\Common\PlainText.cs" />
-    <Compile Include="Security\Symmetric\AesCryptoServiceProvider\SymmetricCrypt.cs" />
-    <Compile Include="Security\Symmetric\Common\SymmetricSecret.cs" />
-    <Compile Include="Common\SystemTimeProvider.cs" />
-    <Compile Include="Common\TThreadStorage.cs" />
-    <Compile Include="Transaction\ITransactionService.cs" />
-    <None Include="Common\TemplateFileManager.CS.ttinclude" />
-    <None Include="Common\THelper.ttinclude" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="postbuild.bat" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Common\IndexedTable.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>IndexedTable.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>$(ProjectDir)postbuild.bat $(ProjectDir) $(ConfigurationName) $(TargetFileName)</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+
+  <Target Name="NugetPackAutoVersioning" AfterTargets="Build">
+    <Exec Command="dotnet pack -p:PackageVersion=$([System.DateTime]::Now.ToString(&quot;yyyy.MM.dd.HHmmss&quot;)) --no-build --configuration $(Configuration) --output &quot;$(ProjectDir)\bin\nuget" />
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.10" />
+  </ItemGroup>
+
 </Project>

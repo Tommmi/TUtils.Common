@@ -40,12 +40,6 @@
     <Compile Include="Transaction\ITransactionService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TUtils.Common\TUtils.Common.csproj">
-      <Project>{6958c19d-1ae9-4cae-aa25-bfe5296a5d6a}</Project>
-      <Name>TUtils.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="postbuild.bat" />

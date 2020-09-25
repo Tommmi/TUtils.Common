@@ -124,12 +124,6 @@
     </None>
     <None Include="postbuild.bat" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TUtils.Common\TUtils.Common.csproj">
-      <Project>{6958c19d-1ae9-4cae-aa25-bfe5296a5d6a}</Project>
-      <Name>TUtils.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>$(ProjectDir)postbuild.bat $(ProjectDir) $(ConfigurationName) $(TargetFileName)</PostBuildEvent>
