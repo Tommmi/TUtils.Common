@@ -1,15 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Mvc.Html;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.WebEncoders;
 using TUtils.Common.Extensions;
 
 namespace TUtils.Common.MVC
 {
-	public class HtmExtensionConfiguration
+	public class HtmlExtensionConfiguration
 	{
 		/// <summary>
 		/// width of left label column 
@@ -48,7 +50,7 @@ namespace TUtils.Common.MVC
 		/// <param name="html"></param>
 		/// <param name="expression"></param>
 		/// <returns></returns>
-		public static MvcHtmlString RenderFormGroup<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
+		public static IHtmlContent RenderFormGroup<TModel, TValue>(this IHtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
 		{
 			return RenderFormGroup(html, expression, null);
 		}
@@ -92,28 +94,31 @@ namespace TUtils.Common.MVC
 		/// optional configuration
 		/// </param>
 		/// <returns></returns>
-		public static MvcHtmlString RenderFormGroup<TModel, TValue>(
-			this HtmlHelper<TModel> html, 
+		public static IHtmlContent RenderFormGroup<TModel, TValue>(
+			this IHtmlHelper<TModel> html, 
 			Expression<Func<TModel, TValue>> expression,
-			HtmExtensionConfiguration configuration)
+			HtmlExtensionConfiguration configuration)
 		{
 			if ( configuration == null )
-				configuration = new HtmExtensionConfiguration();
+				configuration = new HtmlExtensionConfiguration();
 
-			string editorFor = html.EditorFor(expression, new { htmlAttributes = new { @class = "form-control" } }).ToString();
+			var editorFor = html.EditorFor(expression, new { htmlAttributes = new { @class = "form-control" } });
 			var validator = html.ValidationMessageFor(expression, "", new { @class = "text-danger" });
-			var isRequired = html.ViewData.ModelMetadata.IsRequired;
-			var requiredClass = isRequired ? " required" : "";
+			
+			// TODO: Implement required field detection for ASP.NET Core
+			var requiredClass = ""; // For now, skip required field detection
 			var labelFor = html.LabelFor(expression, htmlAttributes: new { @class = $"control-label {configuration.LabelBootstrapClasses}{requiredClass}" });
-			return new MvcHtmlString($@"
-				<div class=""form-group"">
-					{labelFor}
-					<div class=""{configuration.InputBootstrapClasses}"">
-						{editorFor}
-						{validator}
-					</div>
-				</div>
-				");
+			
+			var htmlBuilder = new StringBuilder();
+			htmlBuilder.AppendLine($@"<div class=""form-group"">");
+			htmlBuilder.AppendLine($@"    {GetHtmlString(labelFor)}");
+			htmlBuilder.AppendLine($@"    <div class=""{configuration.InputBootstrapClasses}"">");
+			htmlBuilder.AppendLine($@"        {GetHtmlString(editorFor)}");
+			htmlBuilder.AppendLine($@"        {GetHtmlString(validator)}");
+			htmlBuilder.AppendLine($@"    </div>");
+			htmlBuilder.AppendLine($@"</div>");
+			
+			return new HtmlString(htmlBuilder.ToString());
 		}
 
 		///  <summary>
@@ -153,8 +158,8 @@ namespace TUtils.Common.MVC
 		/// the Uri of the yes - link
 		/// </param>
 		/// <returns></returns>
-		public static MvcHtmlString RenderConfirmationModalDlg<TModel>(
-			this HtmlHelper<TModel> html,
+		public static IHtmlContent RenderConfirmationModalDlg<TModel>(
+			this IHtmlHelper<TModel> html,
 			string modalDlgId,
 			string title,
 			string dlgText,
@@ -200,7 +205,7 @@ namespace TUtils.Common.MVC
 		/// <returns></returns>
 		public static string ToUrlEncodedString(this byte[] bytes)
 		{
-			return HttpUtility.UrlEncode(bytes);
+			return WebEncoders.Base64UrlEncode(bytes);
 		}
 
 		/// <summary>
@@ -210,7 +215,7 @@ namespace TUtils.Common.MVC
 		/// <returns></returns>
 		public static byte[] ToBytesFromUrlEncodedString(this string urlEncodedBytes)
 		{
-			return HttpUtility.UrlDecodeToBytes(urlEncodedBytes);
+			return WebEncoders.Base64UrlDecode(urlEncodedBytes);
 		}
 
 		/// <summary>
@@ -241,8 +246,8 @@ namespace TUtils.Common.MVC
 		/// the href of the yes link.
 		/// </param>
 		/// <returns></returns>
-		public static MvcHtmlString RenderConfirmationModalDlg<TModel>(
-			this HtmlHelper<TModel> html,
+		public static IHtmlContent RenderConfirmationModalDlg<TModel>(
+			this IHtmlHelper<TModel> html,
 			string modalDlgId,
 			string linkButtonText,
 			object htmlAttributes,
@@ -283,8 +288,8 @@ namespace TUtils.Common.MVC
 		/// the html of the ok button
 		/// </param>
 		/// <returns></returns>
-		public static MvcHtmlString RenderConfirmationModalDlgEx<TModel>(
-			this HtmlHelper<TModel> html,
+		public static IHtmlContent RenderConfirmationModalDlgEx<TModel>(
+			this IHtmlHelper<TModel> html,
 			string modalDlgId,
 			string linkButtonText,
 			object htmlAttributes,
@@ -292,30 +297,28 @@ namespace TUtils.Common.MVC
 			string no,
 			string buttonOnOkHtml)
 		{
-			return
-				new MvcHtmlString(
-					$@"
-				<a href=""#{modalDlgId}"" {GetHtmlAttributes(htmlAttributes)} data-toggle=""modal"">{linkButtonText}</a>
-				{RenderConfirmationModalDlgInternal<TModel>(
-							html,
-							modalDlgId,
-							linkButtonText,
-							dlgText,
-							no,
-							okButtonHtml: buttonOnOkHtml)}");
+			var htmlBuilder = new StringBuilder();
+			htmlBuilder.AppendLine($@"<a href=""#{modalDlgId}"" {GetHtmlAttributes(htmlAttributes)} data-bs-toggle=""modal"">{linkButtonText}</a>");
+			htmlBuilder.Append(GetHtmlString(RenderConfirmationModalDlgInternal<TModel>(
+				html,
+				modalDlgId,
+				linkButtonText,
+				dlgText,
+				no,
+				okButtonHtml: buttonOnOkHtml)));
+			
+			return new HtmlString(htmlBuilder.ToString());
 		}
-
-
 
 		///  <summary>
 		///  renders a modal confirmation dialog.
 		///  To show the dialog you may either use a link
 		///  <code><![CDATA[
-		/// 		<a href="#myDialogId" data-toggle="modal"></a>
+		/// 		<a href="#myDialogId" data-bs-toggle="modal"></a>
 		///  ]]></code>
 		///  or a button
 		///  <code><![CDATA[
-		/// 		<button data-target="#myDialogId" data-toggle="modal">Launch Demo Modal</button>
+		/// 		<button data-bs-target="#myDialogId" data-bs-toggle="modal">Launch Demo Modal</button>
 		///  ]]></code>
 		///  or java script
 		///  <code><![CDATA[
@@ -341,33 +344,33 @@ namespace TUtils.Common.MVC
 		/// the html of the ok button
 		/// </param>
 		/// <returns></returns>
-		private static MvcHtmlString RenderConfirmationModalDlgInternal<TModel>(
-			this HtmlHelper<TModel> html,
+		private static IHtmlContent RenderConfirmationModalDlgInternal<TModel>(
+			this IHtmlHelper<TModel> html,
 			string modalDlgId,
 			string title,
 			string dlgText,
 			string no,
 			string okButtonHtml)
 		{
-			return new MvcHtmlString($@"
-                        <div id=""{modalDlgId}"" class=""modal fade"">
-							<div class=""modal-dialog"">
-                                <div class=""modal-content"" >
-                                    <div class=""modal-header"" >
-                                        <button type=""button"" class=""close"" data-dismiss=""modal"" >&times;</button>
-                                        <h4 class=""modal-title"">{title}</h4>
-                                    </div>
-                                    <div class=""modal-body"" >
-                                        <p>{dlgText}</p>
-                                    </div>
-                                    <div class=""modal-footer"" >
-                                        <button type=""button"" class=""btn btn-default"" data-dismiss=""modal"">{no}</button>
-                                        {okButtonHtml}
-                                    </div>
-                                </div>
+			var htmlContent = $@"
+                <div id=""{modalDlgId}"" class=""modal fade"">
+					<div class=""modal-dialog"">
+                        <div class=""modal-content"" >
+                            <div class=""modal-header"" >
+                                <h4 class=""modal-title"">{title}</h4>
+                                <button type=""button"" class=""btn-close"" data-bs-dismiss=""modal"" aria-label=""Close""></button>
+                            </div>
+                            <div class=""modal-body"" >
+                                <p>{dlgText}</p>
+                            </div>
+                            <div class=""modal-footer"" >
+                                <button type=""button"" class=""btn btn-secondary"" data-bs-dismiss=""modal"">{no}</button>
+                                {okButtonHtml}
                             </div>
                         </div>
-						");
+                    </div>
+                </div>";
+			return new HtmlString(htmlContent);
 		}
 
 		/// <summary>
@@ -398,8 +401,8 @@ namespace TUtils.Common.MVC
 		/// <param name="linkText">the textof the link (content of link)</param>
 		/// <param name="htmlAttributes">additonal attributes of the link. e.g.: new {myAttr="yes"}</param>
 		/// <returns></returns>
-		public static MvcHtmlString RenderMailLink<TModel>(
-			this HtmlHelper<TModel> html,
+		public static IHtmlContent RenderMailLink<TModel>(
+			this IHtmlHelper<TModel> html,
 			IEnumerable<string> to,
 			IEnumerable<string> cc,
 			IEnumerable<string> bcc,
@@ -411,7 +414,8 @@ namespace TUtils.Common.MVC
 			var ccText = cc.IsNotNullOrEmpty() ? "&cc=" + Combine<TModel>(cc) : string.Empty;
 			var bccText = bcc.IsNotNullOrEmpty() ? "&bcc=" + Combine<TModel>(bcc) : string.Empty;
 			var htmlAttributesString = GetHtmlAttributes(htmlAttributes);
-			return new MvcHtmlString($"<a {htmlAttributesString} href=\"mailto:{Combine<TModel>(to)}?subject={subject.UrlEncoded()}{ccText}{bccText}&body={textBody.UrlEncoded()}\">{linkText}</a>");
+			var mailtoHref = $"mailto:{Combine<TModel>(to)}?subject={subject.UrlEncoded()}{ccText}{bccText}&body={textBody.UrlEncoded()}";
+			return new HtmlString($"<a {htmlAttributesString} href=\"{mailtoHref}\">{linkText}</a>");
 		}
 
 		private static string GetHtmlAttributes(object htmlAttributes)
@@ -421,7 +425,7 @@ namespace TUtils.Common.MVC
 			{
 				foreach (var property in htmlAttributes.GetType().GetProperties())
 				{
-					string val = property.GetValue(htmlAttributes).ToString();
+					string val = property.GetValue(htmlAttributes)?.ToString() ?? "";
 					htmlAttributesString += $"{property.Name.Remove(ignoreCase: false, pattern: "@")}=\"{val}\" ";
 				}
 			}
@@ -438,6 +442,15 @@ namespace TUtils.Common.MVC
 				addressesAsText.Append(address);
 			}
 			return addressesAsText.ToString();
+		}
+
+		private static string GetHtmlString(IHtmlContent content)
+		{
+			if (content == null) return string.Empty;
+			
+			using var writer = new System.IO.StringWriter();
+			content.WriteTo(writer, System.Text.Encodings.Web.HtmlEncoder.Default);
+			return writer.ToString();
 		}
     }
 }

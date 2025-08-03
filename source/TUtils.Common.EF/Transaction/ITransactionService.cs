@@ -1,11 +1,11 @@
 using System;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using TUtils.Common.Transaction;
 
-namespace TUtils.Common.EF6.Transaction
+namespace TUtils.Common.EF.Transaction
 {
 	/// <summary>
-	/// provides DbContext and encapsulates actions with a transaction.
+	/// Provides DbContext and encapsulates actions with a transaction.
 	/// </summary>
 	/// <typeparam name="TDbContext"></typeparam>
 	public interface ITransactionService<TDbContext> : ITransactionService
@@ -17,6 +17,7 @@ namespace TUtils.Common.EF6.Transaction
 		/// </summary>
 		/// <param name="action"></param>
 		void DoInTransaction(Action<TDbContext> action);
+		
 		/// <summary>
 		/// May be nested
 		/// </summary>
@@ -30,7 +31,8 @@ namespace TUtils.Common.EF6.Transaction
 		/// May be nested
 		/// </summary>
 		/// <param name="action"></param>
-		T DoInTransaction<T>(Func<TDbContext,T> action);
+		T DoInTransaction<T>(Func<TDbContext, T> action);
+		
 		/// <summary>
 		/// May be nested
 		/// </summary>
@@ -38,6 +40,6 @@ namespace TUtils.Common.EF6.Transaction
 		/// <param name="onConcurrencyException">
 		/// called for example in case of a lost update situation
 		/// </param>
-		T DoInTransaction<T>(Func<TDbContext,T> action, Action onConcurrencyException);
+		T DoInTransaction<T>(Func<TDbContext, T> action, Action onConcurrencyException);
 	}
 }

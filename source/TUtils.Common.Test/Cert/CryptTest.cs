@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TUtils.Common.Extensions;
@@ -215,15 +215,12 @@ namespace TUtils.Common.Test.Cert
 			{
 				secret = symmetricCrypt.Secret;
 				encryptedText = symmetricCrypt.Encrypt(new PlainText(_plainText));
-				encryptedText = symmetricCrypt.Encrypt(new PlainText(_plainText));
 				encryptedData = symmetricCrypt.Encrypt(new PlainData(plainTextBytes));
 			}
 
 			using (var symmetricCrypt = symmetricCryptProvider.Create(secret))
 			{
 				var text = symmetricCrypt.Decrypt(encryptedText);
-				Assert.IsTrue(text.Text == _plainText);
-				text = symmetricCrypt.Decrypt(encryptedText);
 				Assert.IsTrue(text.Text == _plainText);
 				var plainData = symmetricCrypt.Decrypt(encryptedData);
 				Assert.IsTrue(plainData.Data.AreEqual(plainTextBytes));

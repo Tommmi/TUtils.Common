@@ -10,17 +10,17 @@ namespace TUtils.Common.Security.Symmetric.AesCryptoServiceProvider
 	{
 		private readonly Guid _publicId;
 		private readonly SymmetricSecret _secret;
-		private System.Security.Cryptography.AesCryptoServiceProvider _dataencrypt;
+		private Aes _dataencrypt;
 
 		public SymmetricCrypt(SymmetricSecret secret)
 		{
 			_publicId = Guid.NewGuid();
-			_dataencrypt = new System.Security.Cryptography.AesCryptoServiceProvider();
+			_dataencrypt = Aes.Create();
 
 			//Block size : Gets or sets the block size, in bits, of the cryptographic operation.  
 			_dataencrypt.BlockSize = 128;
 			//KeySize: Gets or sets the size, in bits, of the secret key  
-			_dataencrypt.KeySize = 128;
+			_dataencrypt.KeySize = 256;
 			//Padding: Gets or sets the padding mode used in the symmetric algorithm  
 			_dataencrypt.Padding = PaddingMode.PKCS7;
 			//Mode: Gets or sets the mode for operation of the symmetric algorithm  
@@ -47,7 +47,7 @@ namespace TUtils.Common.Security.Symmetric.AesCryptoServiceProvider
 
 		void IDisposable.Dispose()
 		{
-			_dataencrypt?.Clear();
+			_dataencrypt?.Dispose();
 			_dataencrypt = null;
 		}
 

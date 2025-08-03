@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>TUtils.Common</RootNamespace>
-    <AssemblyName>TUtils.Common</AssemblyName>
+    <RootNamespace>TUtils.Common.EF</RootNamespace>
+    <AssemblyName>TUtils.Common.EF</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DefineConstants>TRACE;DEBUG;DEBUG_EXCEPTIONS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -17,25 +17,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="log4net" Version="3.1.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.18" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.18" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.18" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Common\TemplateFileManager.CS.ttinclude" />
-    <None Include="Common\THelper.ttinclude" />
+    <ProjectReference Include="..\TUtils.Common\TUtils.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="postbuild.bat" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Common\IndexedTable.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>IndexedTable.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

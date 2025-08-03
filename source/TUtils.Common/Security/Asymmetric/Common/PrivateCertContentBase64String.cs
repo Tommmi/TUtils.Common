@@ -1,4 +1,4 @@
-﻿using TUtils.Common.Security.Asymmetric.RSACryptoServiceProvider;
+using TUtils.Common.Security.Asymmetric.RSACryptoServiceProvider;
 
 namespace TUtils.Common.Security.Asymmetric.Common
 {
@@ -11,6 +11,11 @@ namespace TUtils.Common.Security.Asymmetric.Common
 		IPrivateCertificate IPrivateCertContentBase64String.GetPrivateCertificate()
 		{
 			return this.GetPrivateCertificate();
+		}
+
+		IPrivateCertificate IPrivateCertContentBase64String.GetPrivateCertificate(string password)
+		{
+			return this.GetPrivateCertificate(password);
 		}
 	}
 }

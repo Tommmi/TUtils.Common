@@ -1,44 +1,41 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TUtils.Common.Extensions;
 
-namespace TUtils.Common.EF6
+namespace TUtils.Common.EF
 {
 	public static class EntityExtension
 	{
-		private static string _simpleTypes;
+		private static readonly string _simpleTypes;
 
 		static EntityExtension()
 		{
 			_simpleTypes =
-				typeof (string).Name + " " +
-				typeof (int).Name + " " +
-				typeof (decimal).Name + " " +
-				typeof (float).Name + " " +
-				typeof (DateTime).Name + " " +
-				typeof (bool).Name + " " +
-				typeof (byte).Name + " " +
-				typeof (short).Name + " " +
-				typeof (long).Name + " " +
-				typeof (double).Name + " " +
+				typeof(string).Name + " " +
+				typeof(int).Name + " " +
+				typeof(decimal).Name + " " +
+				typeof(float).Name + " " +
+				typeof(DateTime).Name + " " +
+				typeof(bool).Name + " " +
+				typeof(byte).Name + " " +
+				typeof(short).Name + " " +
+				typeof(long).Name + " " +
+				typeof(double).Name + " " +
 
-				typeof (int?).Name + " " +
-				typeof (decimal?).Name + " " +
-				typeof (float?).Name + " " +
-				typeof (DateTime?).Name + " " +
-				typeof (bool?).Name + " " +
-				typeof (byte?).Name + " " +
-				typeof (short?).Name + " " +
-				typeof (long?).Name + " " +
-				typeof (double?).Name;
+				typeof(int?).Name + " " +
+				typeof(decimal?).Name + " " +
+				typeof(float?).Name + " " +
+				typeof(DateTime?).Name + " " +
+				typeof(bool?).Name + " " +
+				typeof(byte?).Name + " " +
+				typeof(short?).Name + " " +
+				typeof(long?).Name + " " +
+				typeof(double?).Name;
 		}
 
 		/// <summary>
@@ -57,12 +54,12 @@ namespace TUtils.Common.EF6
 		/// <returns>
 		/// true, if there were changes.
 		/// </returns>
-		public static bool ApplyChanges<TEntityType>(TEntityType sourceEntity, TEntityType destEntity, params Expression<Func<TEntityType,object>>[] ignoredProperties)
+		public static bool ApplyChanges<TEntityType>(TEntityType sourceEntity, TEntityType destEntity, params Expression<Func<TEntityType, object>>[] ignoredProperties)
 		{
-			var entityType = typeof (TEntityType);
+			var entityType = typeof(TEntityType);
 			var properties = entityType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
-   			var simpleProperties = GetSimpleProperties<TEntityType>(properties, ignoredProperties);
+			var simpleProperties = GetSimpleProperties<TEntityType>(properties, ignoredProperties);
 			var changedValues = new List<Tuple<PropertyInfo, object>>();
 
 			foreach (var property in simpleProperties)
@@ -70,9 +67,9 @@ namespace TUtils.Common.EF6
 				var destVal = property.GetValue(destEntity);
 				var srcVal = property.GetValue(sourceEntity);
 				if ((destVal != null && !destVal.Equals(srcVal))
-				    || (destVal == null && srcVal != null))
+					|| (destVal == null && srcVal != null))
 				{
-					changedValues.Add(new Tuple<PropertyInfo, object>(property,srcVal));
+					changedValues.Add(new Tuple<PropertyInfo, object>(property, srcVal));
 				}
 			}
 
@@ -85,9 +82,9 @@ namespace TUtils.Common.EF6
 			return true;
 		}
 
-		private static List<PropertyInfo> GetSimpleProperties<TEntityType>(PropertyInfo[] properties, Expression<Func<TEntityType,object>>[] ignoredProperties)
+		private static List<PropertyInfo> GetSimpleProperties<TEntityType>(PropertyInfo[] properties, Expression<Func<TEntityType, object>>[] ignoredProperties)
 		{
-			var type = typeof (TEntityType);
+			var type = typeof(TEntityType);
 			var keyProperties = GetPrimaryKeys(properties, type);
 			var ignoredPropertiesInfos =
 				ignoredProperties.Select(ig => type.GetProperty(StaticReflection.GetMemberName(ig))).ToList();
@@ -108,7 +105,7 @@ namespace TUtils.Common.EF6
 			var keys = new List<PropertyInfo>();
 			foreach (var p in properties)
 			{
-				if ( p.Name == "Id" || p.Name == entityType.Name+"Id" || p.GetCustomAttribute<KeyAttribute>() != null)
+				if (p.Name == "Id" || p.Name == entityType.Name + "Id" || p.GetCustomAttribute<KeyAttribute>() != null)
 					keys.Add(p);
 			}
 			return keys;

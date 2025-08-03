@@ -1,4 +1,4 @@
-﻿namespace TUtils.Common.Security.Asymmetric.Common
+namespace TUtils.Common.Security.Asymmetric.Common
 {
 	public interface IPrivateCertContentBase64String : ICertContentBase64String
 	{
@@ -14,5 +14,13 @@
 		/// </summary>
 		/// <returns></returns>
 		IPrivateCertificate GetPrivateCertificate();
+		
+		/// <summary>
+		/// gets private certificate by base64 string representation with password.
+		/// You must dispose returned certificate by yourself !
+		/// </summary>
+		/// <param name="password">Password for the private certificate</param>
+		/// <returns></returns>
+		IPrivateCertificate GetPrivateCertificate(string password);
 	}
 }

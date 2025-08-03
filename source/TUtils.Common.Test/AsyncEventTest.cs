@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,7 +18,7 @@ namespace TUtils.Common.Test
 			var waitOnEvent = myEvent.RegisterForEvent();
 			var executed = false;
 			var sleep = Task.Delay(1000);
-			sleep.ContinueWith(task =>
+			await sleep.ContinueWith(task =>
 			{
 				executed = true;
 				myEvent.Rise();

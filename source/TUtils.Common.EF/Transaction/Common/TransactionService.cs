@@ -1,12 +1,11 @@
-﻿using System;
+using System;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Core;
-using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using TUtils.Common.Logging;
 using TUtils.Common.Transaction;
 
-namespace TUtils.Common.EF6.Transaction.Common
+namespace TUtils.Common.EF.Transaction.Common
 {
 	internal class ThreadsDbContextType
 	{
@@ -56,7 +55,7 @@ namespace TUtils.Common.EF6.Transaction.Common
 		private readonly ITLog _logger;
 		private readonly IDbContextFactory<TDbContext> _dbContextFactory;
 		private readonly IsolationLevel _isolationLevel;
-		private Guid _serviceId;
+		private readonly Guid _serviceId;
 
 		private class ThreadsDbContextSafeType
 		{
@@ -103,7 +102,7 @@ namespace TUtils.Common.EF6.Transaction.Common
 			DoWithSameDbContext(dbContext =>
 			{
 				action();
-				return new Tuple<bool,int>(true,0);
+				return new Tuple<bool, int>(true, 0);
 			});
 		}
 
@@ -185,7 +184,7 @@ namespace TUtils.Common.EF6.Transaction.Common
 		T ITransactionService<TDbContext>.DoInTransaction<T>(Func<TDbContext, T> action)
 		{
 			return (this as ITransactionService<TDbContext>).DoInTransaction(
-				action,onConcurrencyException:null);
+				action, onConcurrencyException: null);
 		}
 
 		T ITransactionService<TDbContext>.DoInTransaction<T>(Func<TDbContext, T> action, Action onConcurrencyException)
@@ -201,8 +200,8 @@ namespace TUtils.Common.EF6.Transaction.Common
 				// if transaction failed due to concurrency exception
 				if (i > 0)
 				{
-					ThreadsDbContext.DbContext = null;
 					ThreadsDbContext.DbContext?.Dispose();
+					ThreadsDbContext.DbContext = null;
 					ThreadsDbContext.DbContext = _dbContextFactory.Create();
 				}
 
@@ -220,15 +219,11 @@ namespace TUtils.Common.EF6.Transaction.Common
 								transaction.Commit();
 								return new Tuple<bool, T>(true, returnVal);
 							}
-							catch (DBConcurrencyException e)
-							{
-								lastException = Rollback(e, transaction);
-							}
 							catch (DbUpdateConcurrencyException e)
 							{
 								lastException = Rollback(e, transaction);
 							}
-							catch (OptimisticConcurrencyException e)
+							catch (Exception e) when (IsConcurrencyException(e))
 							{
 								lastException = Rollback(e, transaction);
 							}
@@ -264,7 +259,15 @@ namespace TUtils.Common.EF6.Transaction.Common
 			return returnVal;
 		}
 
-		private Exception Rollback(Exception e, DbContextTransaction transaction)
+		private static bool IsConcurrencyException(Exception e)
+		{
+			// Check for common concurrency-related exceptions in EF Core
+			return e.Message.Contains("concurrency") ||
+			       e.Message.Contains("conflict") ||
+			       e is DbUpdateConcurrencyException;
+		}
+
+		private Exception Rollback(Exception e, IDbContextTransaction transaction)
 		{
 			Exception lastException = null;
 			try
