@@ -99,7 +99,7 @@ namespace TUtils.Common.Logging
 
 		public CallerContextDto CreateDto()
 		{
-			return new CallerContextDto(_map.Select(x=>new CallerKontextKeyValuePair(key: x.Key, value:x.Value)));
+			return new CallerContextDto(_map.Select(x=>new CallerContextKeyValuePair(key: x.Key, value:x.Value)));
 		}
 	}
 }

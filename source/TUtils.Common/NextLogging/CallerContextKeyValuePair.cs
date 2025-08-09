@@ -2,16 +2,16 @@
 
 namespace TUtils.Common.Logging
 {
-	public class CallerKontextKeyValuePair
+	public class CallerContextKeyValuePair
 	{
 		public string Key { get; set; }
 		public string Value { get; set; }
 
-		public CallerKontextKeyValuePair()
+		public CallerContextKeyValuePair()
 		{
 
 		}
-		public CallerKontextKeyValuePair(string key, string value)
+		public CallerContextKeyValuePair(string key, string value)
 		{
 			Key = key;
 			Value = value;
