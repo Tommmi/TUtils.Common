@@ -20,19 +20,11 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TUtils.Common\TUtils.Common.csproj" />
+    <PackageReference Include="TUtils2.Common" Version="0.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="postbuild.bat" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="$(ProjectDir)postbuild.bat $(ProjectDir) $(ConfigurationName) $(TargetFileName)" />
-  </Target>
 
 </Project>
