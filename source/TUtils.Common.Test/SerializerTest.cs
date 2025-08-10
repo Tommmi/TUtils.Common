@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,11 +15,19 @@ namespace TUtils.Common.Test
 
     namespace YourProject.Tests
     {
+        /// <summary>
+        /// Test suite for TUtils serialization extension methods.
+        /// Tests JSON serialization and deserialization functionality with various edge cases,
+        /// custom configurations, and error handling scenarios.
+        /// </summary>
         [TestClass]
         public class SerializerTest
         {
-            // ==== Hilfstypen für Tests ====
+            // ==== Helper types for tests ====
 
+            /// <summary>
+            /// Test enumeration for serialization behavior verification.
+            /// </summary>
             private enum Status
             {
                 Unknown = 0,
@@ -27,11 +35,15 @@ namespace TUtils.Common.Test
                 Paused = 2
             }
 
+            /// <summary>
+            /// Sample DTO class with various serialization attributes and edge cases.
+            /// Used to test null handling, property renaming, and attribute behavior.
+            /// </summary>
             private class SampleDto
             {
                 public string Name { get; set; } = "Alice";
 
-                public int? NullableCount { get; set; } // bleibt null -> soll weggelassen werden
+                public int? NullableCount { get; set; } // stays null -> should be omitted
 
                 public Status State { get; set; } = Status.Active;
 
@@ -44,6 +56,10 @@ namespace TUtils.Common.Test
                 public DateTime CreatedAt { get; set; } = new DateTime(2025, 8, 10, 12, 34, 56, DateTimeKind.Unspecified);
             }
 
+            /// <summary>
+            /// Test class for cyclic reference scenarios.
+            /// Used to verify that circular references are handled correctly during serialization.
+            /// </summary>
             private class Node
             {
                 public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -53,36 +69,44 @@ namespace TUtils.Common.Test
 
             // ==== Tests ====
 
+            /// <summary>
+            /// Tests core serialization features including null omission, JsonIgnore attribute,
+            /// enum string conversion, and JsonPropertyName attribute handling.
+            /// </summary>
             [TestMethod]
             public void Serialize_Should_OmitNulls_RespectIgnore_UseEnumStrings_AndPropertyName()
             {
                 var dto = new SampleDto
                 {
                     Name = "Bob",
-                    NullableCount = null,      // soll fehlen
-                    State = Status.Paused,     // soll als "Paused" erscheinen
+                    NullableCount = null,      // should be omitted
+                    State = Status.Paused,     // should appear as "Paused"
                     Secret = "SHOULD_NOT_APPEAR",
                     OriginalValueName = "X"
                 };
 
                 var json = dto.SerializeByTUtils();
 
-                // menschenlesbar (eingerückt)
+                // human-readable (indented)
                 StringAssert.Contains(json, "\n");
 
-                // Null soll fehlen
+                // Null should be missing
                 Assert.IsFalse(json.Contains("NullableCount", StringComparison.Ordinal));
 
-                // [JsonIgnore] respektiert
+                // [JsonIgnore] respected
                 Assert.IsFalse(json.Contains("Secret", StringComparison.Ordinal));
 
-                // [JsonPropertyName] respektiert
+                // [JsonPropertyName] respected
                 StringAssert.Contains(json, "\"renamedValue\": \"X\"");
 
-                // Enum als String
+                // Enum as string
                 StringAssert.Contains(json, "\"State\": \"Paused\"");
             }
 
+            /// <summary>
+            /// Tests DateTime serialization with proper ISO 8601 formatting while preserving DateTimeKind.
+            /// Verifies that Unspecified, UTC, and Local DateTimes are serialized with correct format strings.
+            /// </summary>
             [TestMethod]
             public void Serialize_Should_Write_DateTime_With_RoundTrip_O_Format_Without_Conversion()
             {
@@ -99,20 +123,20 @@ namespace TUtils.Common.Test
 
                 var json = obj.SerializeByTUtils();
 
-                // Unspecified: kein 'Z' und typischerweise kein Offset-Anhang
-                // (wir prüfen hier, dass kein 'Z' direkt vor dem Schluss-Anführungszeichen steht)
+                // Unspecified: no 'Z' and typically no offset suffix
+                // (we check here that no 'Z' appears directly before the closing quote)
                 StringAssert.Contains(json, "\"Unspec\": \"" + unspecified.ToString("O") + "\"");
 
-                // UTC: endet auf 'Z'
+                // UTC: ends with 'Z'
                 StringAssert.Contains(json, "\"Utc\": \"" + utc.ToString("O") + "\"");
 
-                // Local: enthält Offset (+HH:MM oder -HH:MM). Wir validieren via Regex.
-                var localIso = local.ToString("O"); // enthält Offset der lokalen Zone
+                // Local: contains offset (+HH:MM or -HH:MM). We validate via regex.
+                var localIso = local.ToString("O"); // contains local zone offset
                 StringAssert.Contains(json, "\"Local\": \"" + localIso + "\"");
 
-                // Zusatz-Check: Regex auf Offset-Muster
+                // Additional check: Regex for offset pattern
                 var rx = new Regex(@"""Local"":\s*""\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{7}([+-]\d{2}:\d{2})""");
-                Assert.IsTrue(rx.IsMatch(json), "Local DateTime sollte einen Offset enthalten.");
+                Assert.IsTrue(rx.IsMatch(json), "Local DateTime should contain an offset.");
             }
 
             [TestMethod]
@@ -125,7 +149,7 @@ namespace TUtils.Common.Test
 
                 var json = dto.SerializeByTUtils();
 
-                // exakter Offset +02:00 muss drinstehen
+                // exact offset +02:00 must be present
                 StringAssert.Contains(json, "\"When\": \"" + dto.When.ToString("O") + "\"");
             }
 
@@ -135,32 +159,32 @@ namespace TUtils.Common.Test
                 var a = new Node { Id = "A" };
                 var b = new Node { Id = "B" };
                 a.Next = b;
-                b.Prev = a; // Zyklus
+                b.Prev = a; // cycle
 
-                // Sollte NICHT werfen dank ReferenceHandler.IgnoreCycles
+                // Should NOT throw thanks to ReferenceHandler.IgnoreCycles
                 var json = a.SerializeByTUtils();
 
-                // A ist da
+                // A is present
                 StringAssert.Contains(json, "\"Id\": \"A\"");
-                // B ist da
+                // B is present
                 StringAssert.Contains(json, "\"Id\": \"B\"");
-                // Die Rückreferenz von B -> A wird ignoriert (kein unendlicher Baum)
-                // Wir erwarten, dass "Prev" existiert, aber ohne vollständige erneute Serialisierung (kann null sein oder fehlen)
-                // Minimalprüfung: Es wurde ein JSON erzeugt (wir testen hier primär "kein Throw").
+                // The back-reference from B -> A is ignored (no infinite tree)
+                // We expect "Prev" to exist but without complete re-serialization (can be null or missing)
+                // Minimal check: JSON was generated (we're primarily testing "no throw" here).
                 Assert.IsFalse(string.IsNullOrWhiteSpace(json));
             }
 
             [TestMethod]
             public void Deserialize_Should_Respect_PropertyName_Case_Insensitivity_And_Tolerate_Trailing_Commas_And_Comments()
             {
-                // JSON mit anderem Propertynamen-Case, Kommentar und trailing comma
+                // JSON with different property name case, comment and trailing comma
                 var json = @"
             {
-                // Kommentar sollte ignoriert werden
+                // Comment should be ignored
                 ""name"": ""Carol"",
                 ""STATE"": ""Active"",
                 ""renamedValue"": ""Shown"",
-                ""NullableCount"": null, // trailing comma folgt
+                ""NullableCount"": null, // trailing comma follows
             }";
 
                 var dto = json.DeserializeByTUtils<SampleDto>();
@@ -168,7 +192,7 @@ namespace TUtils.Common.Test
                 Assert.AreEqual("Carol", dto!.Name);
                 Assert.AreEqual(Status.Active, dto.State);
                 Assert.AreEqual("Shown", dto.OriginalValueName);
-                Assert.IsNull(dto.NullableCount); // wurde korrekt als null gelesen
+                Assert.IsNull(dto.NullableCount); // was correctly read as null
             }
 
             [TestMethod]
@@ -188,9 +212,9 @@ namespace TUtils.Common.Test
                 var dto = new SampleDto { Name = "Pretty" };
                 var json = dto.SerializeByTUtils();
 
-                // Einrückungen (Leerzeichen/Zeilenumbrüche) vorhanden
+                // Indentations (spaces/line breaks) present
                 Assert.IsTrue(json.Contains("\n") || json.Contains("\r"));
-                // Schlüssel und Werte getrennt (heuristisch)
+                // Keys and values separated (heuristic)
                 StringAssert.Contains(json, "  \"Name\": \"Pretty\"");
             }
 
