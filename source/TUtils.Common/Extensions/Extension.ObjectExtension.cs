@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
+using TUtils.Common.Common;
 
 // ReSharper disable MemberCanBePrivate.Global
 
@@ -358,6 +360,10 @@ namespace TUtils.Common.Extensions
 
 		}
 
+        public static string SerializeByTUtils(this object value)
+            => TSerializer.Serialize(value);
 
-	}
+
+
+    }
 }
