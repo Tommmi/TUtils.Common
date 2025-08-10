@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
+using TUtils.Common.Common;
 using TUtils.Common.Logging.Common;
 
 namespace TUtils.Common.Logging.LogMocs
@@ -61,8 +63,8 @@ namespace TUtils.Common.Logging.LogMocs
 
 		void ILogWriter.Write2LogFile(Dictionary<Guid, ILogValue> logValues)
 		{
-			string strNamespace;
-			TryGetValue(logValues, PredefinedLoggingValueIDs.Namespace, out strNamespace);
+            string strNamespace;
+            TryGetValue(logValues, PredefinedLoggingValueIDs.Namespace, out strNamespace);
 			string loggingText;
 			if (!TryGetValue(logValues, PredefinedLoggingValueIDs.ExceptionObject, out loggingText))
 			{
@@ -76,8 +78,20 @@ namespace TUtils.Common.Logging.LogMocs
 			else
 				severity += " - ";
 
-			Debug.WriteLine(
-				$"{severity}{strNamespace}: {loggingText}");
+
+			StringBuilder valuesTxt = new StringBuilder();
+			foreach(var v in logValues)
+            {
+                SwitchHelper.SwitchOn(v.Key)
+                    .Case(PredefinedLoggingValueIDs.Namespace.Guid, () => {})
+                    .Case(PredefinedLoggingValueIDs.ExceptionObject.Guid, () => { })
+                    .Case(PredefinedLoggingValueIDs.LoggingText.Guid, () => { })
+                    .Case(PredefinedLoggingValueIDs.Severity.Guid, () => { })
+                    .Default(() => valuesTxt.Append($",{v.Value.Key.ElementName}:{v.Value.Value}"));
+            }
+
+			Console.WriteLine(
+				$"{DateTime.Now:HH:mm:ss:fff}{severity}{strNamespace}{valuesTxt.ToString()},{loggingText}");
 		}
 	}
 }

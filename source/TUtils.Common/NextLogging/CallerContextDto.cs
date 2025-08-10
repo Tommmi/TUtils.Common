@@ -4,15 +4,15 @@ namespace TUtils.Common.Logging
 {
 	public class CallerContextDto
 	{
-		public List<CallerKontextKeyValuePair> KeyValues { get; set; }
+		public List<CallerContextKeyValuePair> KeyValues { get; set; }
 
 		public CallerContextDto()
 		{
 		}
 
-		public CallerContextDto(IEnumerable<CallerKontextKeyValuePair> keyValuePairs)
+		public CallerContextDto(IEnumerable<CallerContextKeyValuePair> keyValuePairs)
 		{
-			KeyValues = new List<CallerKontextKeyValuePair>();
+			KeyValues = new List<CallerContextKeyValuePair>();
 			KeyValues.AddRange(keyValuePairs);
 		}
 	}
