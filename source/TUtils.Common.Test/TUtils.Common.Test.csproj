@@ -18,15 +18,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.18" />
+	<PackageReference Include="FluentAssertions" Version="[7.0.0,8.0.0)" />   
+	<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.18" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.10.0" />
     <PackageReference Include="MSTest.TestFramework" Version="3.10.0" />
     <PackageReference Include="LinqKit" Version="1.3.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\TUtils.Common\TUtils.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +39,10 @@
     <None Include="Cert\CER_1.cer" />
     <None Include="Cert\CER_1.pfx" />
     <None Include="Cert\CER_1.pvk" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TUtils.Common\TUtils.Common.csproj" />
   </ItemGroup>
 
 </Project>

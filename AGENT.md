@@ -23,7 +23,6 @@ source/
 ├── TUtils.Common.EF/              # Entity Framework Core utilities
 │   └── Transaction/               # EF transaction management
 ├── TUtils.Common.MVC/             # ASP.NET Core MVC utilities
-│   ├── Unity/                     # DI integration
 │   └── Extensions and Attributes  # MVC helpers
 └── TUtils.Common.Test/            # Unit tests
     ├── Cert/                      # Test certificates
@@ -35,10 +34,26 @@ source/
 - **Core Components**: Logging (TLog/ITLog), Crypto (symmetric/asymmetric), AsyncEvent, ThreadStarter, IndexedTable, FilePath utilities, DependencyInjection, CommandLine parsing
 - **Test Framework**: MSTest with Microsoft.VisualStudio.TestTools.UnitTesting
 - **Dependencies**: 
-  - Core: log4net, System.Data.SqlClient
-  - EF: Microsoft.EntityFrameworkCore (SQL Server, SQLite), Microsoft.Extensions.Configuration
-  - MVC: Microsoft.AspNetCore.App, Microsoft.Extensions.DependencyInjection, Newtonsoft.Json
-  - Test: EntityFramework 6.4.4, LinqKit
+  - Core: log4net 3.1.0, System.Data.SqlClient 4.9.0
+  - EF: Microsoft.EntityFrameworkCore 8.0.18 (SQL Server, SQLite), Microsoft.Extensions.Configuration 8.0.0
+  - MVC: Microsoft.AspNetCore.App, Microsoft.Extensions.DependencyInjection 8.0.1, Newtonsoft.Json 13.0.3
+  - Test: Microsoft.EntityFrameworkCore.SqlServer 8.0.18, MSTest.TestFramework 3.10.0, MSTest.TestAdapter 3.10.0, Microsoft.NET.Test.Sdk 17.14.1, LinqKit 1.3.8
+
+## Key Components Index
+- **TLog**: source/TUtils.Common/Logging/TLog.cs - Main logging implementation with thread-attached values
+- **ITLog**: source/TUtils.Common/Logging/ITLog.cs - Core logging interface
+- **AsyncEvent**: source/TUtils.Common/Async/AsyncEvent.cs - Event for asynchronous waiting with await keyword
+- **AsyncThreadStarter**: source/TUtils.Common/Async/AsyncThreadStarter.cs - Creates threads with async/await support
+- **TFilePath**: source/TUtils.Common/Common/TFilePath.cs - File path manipulation and utilities
+- **TThreadStorage**: source/TUtils.Common/Common/TThreadStorage.cs - Thread-bound object storage
+- **IndexedTable**: source/TUtils.Common/Common/IndexedTable.cs - High-performance indexed data structure
+- **CommandLineArgs**: source/TUtils.Common/CommandLine/CommandLineArgs.cs - Command line argument parsing
+- **SymmetricCrypt**: source/TUtils.Common/Security/Symmetric/ - AES encryption utilities
+- **RSA/Certificates**: source/TUtils.Common/Security/Asymmetric/ - RSA encryption and certificate handling
+- **IDIContainer**: source/TUtils.Common/DependencyInjection/IDIContainer.cs - Technology-independent DI container
+- **Extensions**: source/TUtils.Common/Extensions/ - Extensive extension methods for strings, arrays, types
+- **ITransactionService**: source/TUtils.Common/Transaction/ITransactionService.cs - Transaction management
+- **AssemblyLib**: source/TUtils.Common/Reflection/AssemblyLib.cs - Assembly search and manipulation
 
 ## Code Style & Conventions
 - **Naming**: PascalCase for public members, camelCase for private fields, prefix interfaces with 'I'

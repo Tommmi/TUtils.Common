@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TUtils.Common.Common;
 // ReSharper disable UnusedMember.Global
 
 namespace TUtils.Common.Extensions
@@ -337,5 +338,16 @@ namespace TUtils.Common.Extensions
 			return resText.ToString();
 		}
 
-	}
+        public static T? DeserializeByTUtils<T>(this string json)
+            => TSerializer.Deserialize<T>(json);
+
+        public static object DeserializeByTUtils(this string json, Type returnType)
+            => TSerializer.Deserialize(json, returnType);
+
+        public static bool TryDeserializeByTUtils<T>(this string json, out T result)
+            => TSerializer.TryDeserialize(json, out result);
+
+
+
+    }
 }
