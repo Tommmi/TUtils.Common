@@ -80,7 +80,7 @@ namespace TUtils.Common.Logging
             return callerContext;
         }
 
-        public static void SetLoggingValue(this object loggingInstance, string valueName, string value)
+        public static void SetLoggingValue(this ILogger loggingInstance, string valueName, string value)
         {
             GetTaskStorage().Value[valueName] = value;
         }

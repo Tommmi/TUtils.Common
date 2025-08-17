@@ -66,7 +66,6 @@ namespace TUtils.Common.Async
 
 			private readonly Func<CancellationToken, TReturn> _threadMethod;
 			private readonly CancellationToken _cancellationToken;
-			private readonly ITLog _logger;
 			private AsyncEvent _startedEv;
 			private AsyncEvent _terminatedEv;
 			private readonly Task _waitForStart;
@@ -89,13 +88,11 @@ namespace TUtils.Common.Async
 				string threadName,
 				CancellationToken cancellationToken,
 				ThreadPriority threadPriority,
-				ITLog logger,
 				Func<CancellationToken, TReturn> threadMethod)
 			{
 				ThreadName = threadName;
 				_threadMethod = threadMethod;
 				_cancellationToken = cancellationToken;
-				_logger = logger??new TLog(new LogMocWriter(),false);
 				// waiting tasks for the events _startedEv and _terminatedEv may not be canceled 
 				_startedEv = new AsyncEvent(null);
 				_waitForStart = _startedEv.RegisterForEvent();
@@ -110,7 +107,7 @@ namespace TUtils.Common.Async
 			private void ThreadMethod()
 			{
 				_startedEv.Rise();
-				_logger.LogInfo(this,"thread name={0} id={1} started", ()=>ThreadName, ()=>Thread.CurrentThread.ManagedThreadId);
+
 				try
 				{
 					var res = _threadMethod(_cancellationToken);
@@ -153,10 +150,9 @@ namespace TUtils.Common.Async
 			string threadName,
 			CancellationToken cancellationToken,
 			ThreadPriority threadPriority,
-			ITLog logger,
 			Func<CancellationToken, TReturn> synchronousThreadMethod)
 		{
-			return new Thread<TReturn>(threadName,cancellationToken, threadPriority, logger, synchronousThreadMethod);
+			return new Thread<TReturn>(threadName,cancellationToken, threadPriority, synchronousThreadMethod);
 		}
 	}
 }

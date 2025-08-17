@@ -9,11 +9,10 @@ namespace System.Threading.Tasks
 		/// Logs exception but doesn't catch exceptions
 		/// </summary>
 		/// <param name="task"></param>
-		/// <param name="logger"></param>
 		/// <returns></returns>
-		public static async Task LogExceptions(this Task task, ITLog logger)
+		public static async Task LogExceptions(this Task task)
 		{
-			await task.ContinueWith(tsk => logger.LogException(tsk.Exception), TaskContinuationOptions.OnlyOnFaulted);
+			await task.ContinueWith(tsk => typeof(TaskExtension).Log().LogError(e:tsk.Exception), TaskContinuationOptions.OnlyOnFaulted);
 			await task;
 		}
 
@@ -22,11 +21,10 @@ namespace System.Threading.Tasks
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="task"></param>
-		/// <param name="logger"></param>
 		/// <returns></returns>
-		public static async Task<T> LogExceptions<T>(this Task<T> task, ITLog logger)
+		public static async Task<T> LogExceptions<T>(this Task<T> task)
 		{
-			await task.ContinueWith(tsk => logger.LogException(tsk.Exception), TaskContinuationOptions.OnlyOnFaulted);
+			await task.ContinueWith(tsk => typeof(TaskExtension).Log().LogError(e: tsk.Exception), TaskContinuationOptions.OnlyOnFaulted);
 			return await task;
 		}
 

@@ -13,14 +13,28 @@ using TUtils.Common.Security.Symmetric.Common;
 namespace TUtils.Common.Test.Cert
 {
 	/// <summary>
-	/// Summary description for CryptTest
+	/// Test suite for cryptographic functionality in TUtils.Common.
+	/// Tests both symmetric (AES) and asymmetric (RSA) encryption, decryption, 
+	/// digital signatures, and certificate handling capabilities.
 	/// </summary>
 	[TestClass]
 	public class CryptTest
 	{
+		/// <summary>
+		/// Base64-encoded public certificate used for encryption and signature verification tests.
+		/// </summary>
 		private IPublicCertContentBase64String _publicCertificateBase64;
+
+		/// <summary>
+		/// Base64-encoded private key used for decryption and signing tests.
+		/// </summary>
 		private IPrivateCertContentBase64String _privateKeyBase64;
 
+		/// <summary>
+		/// Complex Unicode test string containing mathematical symbols, special characters,
+		/// and various language elements to thoroughly test encryption/decryption with different character sets.
+		/// Originally from Markus Kuhn's UTF-8 test samples.
+		/// </summary>
 		private string _plainText =
 			@"Markus Kuhn [ˈmaʳkʊs kuːn] <mkuhn@acm.org> — 1999-08-20
 
@@ -44,13 +58,20 @@ namespace TUtils.Common.Test.Cert
 				  Y [ˈʏpsilɔn], Yen [jɛn], Yoga [ˈjoːgɑ]";
 
 
+		/// <summary>
+		/// Initializes the test certificates with hardcoded Base64 certificate data.
+		/// Sets up both public and private certificates for cryptographic testing.
+		/// </summary>
+		/// <param name="certificateProvider">The certificate provider instance to use for certificate creation.</param>
 		private void Init(ICertificateProvider certificateProvider)
 		{
+			// Alternative method to load from file:
 			//var content = certificateProvider
 			//	.GetPublicCertificateByFilePath(@"C:\tmp\cert\CER_1.cer", "starwar")
 			//	.ToBase64String()
 			//	.Content;
 
+			// Create public certificate from Base64 string for testing
 			_publicCertificateBase64 = certificateProvider.CreatePublicCertificateDefinitionByString(
 				"MIIC7jCCAdagAwIBAgIQOg4f0m + KJr9JJN1zp0C2dzANBgkqhkiG9w0BAQsFADANMQ" +
 				"swCQYDVQQDEwJDQTAeFw0xNjA1MzExNTM2MTJaFw0zOTEyMzEyMzU5NTlaMBUxEzARBg" +
@@ -70,11 +91,13 @@ namespace TUtils.Common.Test.Cert
 				"RrwKjgJWxrQNAXFI19PLYSUQ / 2lLZrNQ / O4wXINhAA ==");
 
 
+			// Alternative method to extract private key:
 			//string content = _publicCertificateBase64
 			//	.GetPrivateCertificate("starwar")
 			//	.ToBase64String()
 			//	.Content;
 
+			// Create private certificate from Base64 string for testing
 			_privateKeyBase64 = certificateProvider.CreatePrivateCertificateDefinitionByString(
 				"MIIJuQIBAzCCCXkGCSqGSIb3DQEHAaCCCWoEgglmMIIJYjCCBg0GCSqGSIb3DQEHAaCCBf4EggX6MIIF9jCCBfIGCyqGSIb" +
 				"3DQEMCgECoIIE/jCCBPowHAYKKoZIhvcNAQwBAzAOBAg1fvOsrYjj1gICB9AEggTY64PyClLXUHjYfdqbxUms1tWyYnYTmu" +
@@ -115,20 +138,34 @@ namespace TUtils.Common.Test.Cert
 
 		}
 
+		/// <summary>
+		/// Tests digital signature creation and verification using RSA certificates.
+		/// Verifies that text signed with a private key can be verified with the corresponding public key.
+		/// </summary>
 		[TestMethod]
 		public void TestSignature()
 		{
+			// Arrange: Initialize certificate provider and test certificates
 			var certificateProvider = new CertificateProvider() as ICertificateProvider;
 			Init(certificateProvider);
 
+			// Act & Assert: Create signature and verify it
 			using (var privateCert = _privateKeyBase64.GetPrivateCertificate())
 			using (var publicCert = _publicCertificateBase64.GetPublicCertificate("starwar"))
 			{
+				// Sign the plain text with private key
 				var signature64 = privateCert.SignBase64(_plainText);
-				Assert.IsTrue(publicCert.Verify(_plainText, signature64));
+				
+				// Verify signature with public key
+				Assert.IsTrue(publicCert.Verify(_plainText, signature64), 
+					"Signature verification should succeed with matching public/private key pair");
 			}
 		}
 
+		/// <summary>
+		/// Disabled test for finding certificates in Windows certificate storage.
+		/// This test would verify certificate lookup by name and validation status.
+		/// </summary>
 		//[TestMethod]
 		//public void TestFindCertification()
 		//{
@@ -137,80 +174,105 @@ namespace TUtils.Common.Test.Cert
 		//	Assert.IsTrue(privateCertificate.IsValidAndTrusted(new DateTime(2016,6,1)).Verified);
 		//}
 
+		/// <summary>
+		/// Tests string serialization behavior with malformed Unicode characters.
+		/// Verifies how different encoding methods handle invalid Unicode surrogates
+		/// and demonstrates the only method that preserves the original string exactly.
+		/// </summary>
 		[TestMethod]
 		public void TestSerializingString()
 		{
+			// Arrange: Create string with invalid Unicode surrogate (0xD800 without pair)
 			string s = "Test\ud800Test";
 
+			// Act & Assert: Test various encoding methods that fail to preserve the string
 			var bytes = Encoding.Unicode.GetBytes(s);
 			var text = Encoding.Unicode.GetString(bytes);
-			Assert.IsTrue(s != text); // ok - tatsächlich unterschiedlich
+			Assert.IsTrue(s != text, "Unicode encoding should modify the malformed string");
 
 			bytes = Encoding.UTF8.GetBytes(s);
 			text = Encoding.UTF8.GetString(bytes);
-			Assert.IsTrue(s != text); // ok - tatsächlich unterschiedlich
+			Assert.IsTrue(s != text, "UTF8 encoding should modify the malformed string");
 
 			bytes = Encoding.UTF32.GetBytes(s);
 			text = Encoding.UTF32.GetString(bytes);
-			Assert.IsTrue(s != text); // ok - tatsächlich unterschiedlich
+			Assert.IsTrue(s != text, "UTF32 encoding should modify the malformed string");
 
 			bytes = Encoding.Default.GetBytes(s);
 			text = Encoding.Default.GetString(bytes);
-			Assert.IsTrue(s != text); // ok - tatsächlich unterschiedlich
+			Assert.IsTrue(s != text, "Default encoding should modify the malformed string");
 
 			bytes = Encoding.UTF8.GetBytes(s.ToCharArray());
 			text = Encoding.UTF8.GetString(bytes);
-			Assert.IsTrue(s != text); // ok - tatsächlich unterschiedlich
+			Assert.IsTrue(s != text, "UTF8 with char array should modify the malformed string");
 
 			bytes = Encoding.Unicode.GetBytes(s.ToCharArray());
 			text = Encoding.Unicode.GetString(bytes);
-			Assert.IsTrue(s != text); // ok - tatsächlich unterschiedlich
+			Assert.IsTrue(s != text, "Unicode with char array should modify the malformed string");
 
 			bytes = Encoding.Default.GetBytes(s.ToCharArray());
 			text = Encoding.Default.GetString(bytes);
-			Assert.IsTrue(s != text); // ok - tatsächlich unterschiedlich
+			Assert.IsTrue(s != text, "Default with char array should modify the malformed string");
 
-			bytes = new byte[s.Length*sizeof (char)];
+			// Act & Assert: Test the only method that preserves the original string exactly
+			bytes = new byte[s.Length * sizeof(char)];
 			Buffer.BlockCopy(s.ToCharArray(), 0, bytes, 0, bytes.Length);
-			char[] chars = new char[bytes.Length/sizeof (char)];
+			char[] chars = new char[bytes.Length / sizeof(char)];
 			Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
 			text = new string(chars);
-			Assert.IsTrue(s == text); // ok - tatsächlich gleich
+			Assert.IsTrue(s == text, "Buffer.BlockCopy method should preserve the exact original string");
 		}
 
+		/// <summary>
+		/// Tests RSA encryption and decryption using both certificate storage and Base64 certificates.
+		/// Verifies that text encrypted with a public key can be decrypted with the corresponding private keys.
+		/// </summary>
 		[TestMethod]
 		public void TestRsaLib1()
 		{
+			// Arrange: Initialize certificate provider and test certificates
 			var certificateProvider = new CertificateProvider() as ICertificateProvider;
 			Init(certificateProvider);
 
+			// Act & Assert: Test encryption and decryption with different private key sources
 			using (var publicCertificate = _publicCertificateBase64.GetPublicCertificate("starwar"))
 			using (var privateCertificate = _publicCertificateBase64.GetPrivateCertificate("starwar"))
 			using (var privateCertificate2 = _privateKeyBase64.GetPrivateCertificate())
 			{
+				// Encrypt text with public key
 				var encryptedStringBase64 = publicCertificate.Encrypt(_plainText);
 				string plainTextDecrypted;
-				// if certificate is installed in certification storage
+
+				// Test decryption with private certificate from certificate storage (if available)
 				if (privateCertificate != null)
 				{
 					plainTextDecrypted = privateCertificate.Decrypt(encryptedStringBase64);
-					Assert.IsTrue(_plainText == plainTextDecrypted);
+					Assert.IsTrue(_plainText == plainTextDecrypted, 
+						"Decryption with certificate storage private key should restore original text");
 				}
 
+				// Test decryption with Base64 private certificate
 				plainTextDecrypted = privateCertificate2.Decrypt(encryptedStringBase64);
-				Assert.IsTrue(_plainText == plainTextDecrypted);
+				Assert.IsTrue(_plainText == plainTextDecrypted, 
+					"Decryption with Base64 private key should restore original text");
 			}
 		}
 
+		/// <summary>
+		/// Tests symmetric (AES) encryption and decryption for both text and binary data.
+		/// Verifies that data encrypted with one instance can be decrypted with another instance using the same secret.
+		/// </summary>
 		[TestMethod]
 		public void TestSymmetric1()
 		{
+			// Arrange: Set up symmetric encryption provider and prepare test data
 			var symmetricCryptProvider = new SymmetricCryptProvider() as ISymmetricCryptProvider;
 			ISymmetricSecret secret = null;
 			EncryptedText encryptedText = null;
 			EncryptedData encryptedData = null;
 			var plainTextBytes = _plainText.ToUTF8CodedByteArray();
 
+			// Act: Encrypt both text and binary data, capturing the secret
 			using (var symmetricCrypt = symmetricCryptProvider.Create())
 			{
 				secret = symmetricCrypt.Secret;
@@ -218,12 +280,18 @@ namespace TUtils.Common.Test.Cert
 				encryptedData = symmetricCrypt.Encrypt(new PlainData(plainTextBytes));
 			}
 
+			// Act & Assert: Decrypt with a new instance using the same secret
 			using (var symmetricCrypt = symmetricCryptProvider.Create(secret))
 			{
+				// Test text decryption
 				var text = symmetricCrypt.Decrypt(encryptedText);
-				Assert.IsTrue(text.Text == _plainText);
+				Assert.IsTrue(text.Text == _plainText, 
+					"Decrypted text should match the original plain text");
+
+				// Test binary data decryption
 				var plainData = symmetricCrypt.Decrypt(encryptedData);
-				Assert.IsTrue(plainData.Data.AreEqual(plainTextBytes));
+				Assert.IsTrue(plainData.Data.AreEqual(plainTextBytes), 
+					"Decrypted binary data should match the original byte array");
 			}
 		}
 	}
