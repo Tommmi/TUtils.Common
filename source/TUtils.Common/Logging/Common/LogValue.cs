@@ -7,9 +7,9 @@ namespace TUtils.Common.Logging.Common
 		public ILoggingValueKey Key { get; }
 
 		private string _logValue;
-		public string Value => _logValue ?? (_logValue = _getLogText());
+		public string Value => _logValue ??= _getLogText();
 
-		private readonly Func<string> _getLogText;
+		private readonly Func<string> _getLogText = () => "";
 
 		private LogValue(ILoggingValueKey loggingValueKey)
 		{
