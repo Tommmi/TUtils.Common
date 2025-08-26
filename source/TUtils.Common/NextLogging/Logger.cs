@@ -52,7 +52,7 @@ namespace TUtils.Common.Logging
 				foreach (var property in properties)
 				{
 					var name = property.Name;
-					var value = property.GetValue(valueMap).ToString();
+					var value = property.GetValue(valueMap)?.ToString();
 					if (!_knownLogGuids.TryGetValue(name, out var guid))
 					{
 						_knownLogGuids[name] = guid = Guid.NewGuid();
