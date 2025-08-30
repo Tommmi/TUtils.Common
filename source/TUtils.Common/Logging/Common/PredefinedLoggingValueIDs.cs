@@ -47,13 +47,6 @@ namespace TUtils.Common.Logging.Common
 			isFilterable: true,
 			guidName: () => Namespace);
 		/// <summary>
-		/// LoggingInstanceID
-		/// </summary>
-		public static readonly ILoggingValueKey LoggingInstanceId = new LoggingFilterableValue().Init(
-			guid: new Guid("{1588B00D-7592-4B92-AEC6-BA3BABE0DDC9}"),
-			isFilterable: false,
-			guidName: () => LoggingInstanceId);
-		/// <summary>
 		/// MethodName
 		/// </summary>
 		public static readonly ILoggingValueKey MethodName = new LoggingFilterableValue().Init(
@@ -88,5 +81,19 @@ namespace TUtils.Common.Logging.Common
 			guid: new Guid("{65AD1980-C494-43D4-A6EC-04D61EA4E285}"),
 			isFilterable: false,
 			guidName: () => Filename);
+		/// <summary>
+		/// Class
+		/// </summary>
+		public static readonly ILoggingValueKey Class = new LoggingFilterableValue().Init(
+			guid: new Guid("{52ad52af-0203-4436-8f2c-e1f0d36306a5}"),
+			isFilterable: false,
+			guidName: () => Class);
+		/// <summary>
+		/// Action
+		/// </summary>
+		public static readonly ILoggingValueKey Action = new LoggingFilterableValue().Init(
+			guid: new Guid("{7fd66c29-179b-42f1-ba17-7425234fe4bc}"),
+			isFilterable: false,
+			guidName: () => Action);
 	}
 }
