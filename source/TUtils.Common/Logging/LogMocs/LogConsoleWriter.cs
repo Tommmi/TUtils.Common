@@ -8,7 +8,7 @@ using TUtils.Common.Logging.Common;
 
 namespace TUtils.Common.Logging.LogMocs
 {
-	public class LogConsoleWriter : ILogWriter
+	public class LogConsoleWriter : LogWriterBase, ILogWriter
 	{
 		private readonly LogSeverityEnum _minSeverity;
 		private readonly List<KeyValuePair<string, bool>> _configurations;
@@ -63,35 +63,12 @@ namespace TUtils.Common.Logging.LogMocs
 
 		void ILogWriter.Write2LogFile(Dictionary<Guid, ILogValue> logValues)
 		{
-            string strNamespace;
-            TryGetValue(logValues, PredefinedLoggingValueIDs.Namespace, out strNamespace);
-			string loggingText;
-			if (!TryGetValue(logValues, PredefinedLoggingValueIDs.ExceptionObject, out loggingText))
+			if(((ILogWriter)this).IsActive(logValues))
 			{
-				TryGetValue(logValues, PredefinedLoggingValueIDs.LoggingText, out loggingText);
+				var text = GetLogTextInExcelStyle(logValues);
+
+				Console.WriteLine(text);
 			}
-
-			string severity;
-			TryGetValue(logValues, PredefinedLoggingValueIDs.Severity, out severity);
-			if (severity == LogSeverityEnum.INFO.ToString())
-				severity = string.Empty;
-			else
-				severity += " - ";
-
-
-			StringBuilder valuesTxt = new StringBuilder();
-			foreach(var v in logValues)
-            {
-                SwitchHelper.SwitchOn(v.Key)
-                    .Case(PredefinedLoggingValueIDs.Namespace.Guid, () => {})
-                    .Case(PredefinedLoggingValueIDs.ExceptionObject.Guid, () => { })
-                    .Case(PredefinedLoggingValueIDs.LoggingText.Guid, () => { })
-                    .Case(PredefinedLoggingValueIDs.Severity.Guid, () => { })
-                    .Default(() => valuesTxt.Append($",{v.Value.Key.ElementName}:{v.Value.Value}"));
-            }
-
-			Console.WriteLine(
-				$"{DateTime.Now:HH:mm:ss:fff}{severity}{strNamespace}{valuesTxt.ToString()},{loggingText}");
 		}
 	}
 }

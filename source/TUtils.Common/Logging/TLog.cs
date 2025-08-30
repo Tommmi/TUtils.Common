@@ -329,11 +329,6 @@ namespace TUtils.Common.Logging
 				logValues.Add(new LogValue(
 					PredefinedLoggingValueIDs.ExceptionObject,
 					ExceptionHelper.DumpException(e)));
-			// LoggingInstanceID
-			if (loggingInstance != null)
-				logValues.Add(new LogValue(
-					PredefinedLoggingValueIDs.LoggingInstanceId,
-					loggingInstance.GetHashCode().ToString(CultureInfo.InvariantCulture)));
 			// LoggingText
 			if (formattedText != null)
 			{
