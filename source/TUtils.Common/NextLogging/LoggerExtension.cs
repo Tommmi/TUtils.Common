@@ -74,7 +74,7 @@ namespace TUtils.Common.Logging
 
         private static ICallerContext CreateCallersContent(CallerContextDto callerContextDto, ILogWriter logWriter)
         {
-            ITLog log = new TLog(logWriter: logWriter, isLoggingOfMethodNameActivated: true);
+            ITLog log = new TLog(logWriter: logWriter, isLoggingOfMethodNameActivated: false);
             ILoggerFactory loggerFactory = new LoggerFactory(log: log);
             ICallerContext callerContext = new CallerContext(loggerFactory: loggerFactory, callerContextDto: callerContextDto);
             return callerContext;
