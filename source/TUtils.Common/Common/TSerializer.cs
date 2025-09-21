@@ -28,6 +28,11 @@ namespace TUtils.Common.Common
         {
             try
             {
+                if(json == null)
+                {
+	                result = default;
+                    return false;
+                }
                 result = JsonSerializer.Deserialize<T>(json, _options);
                 return true;
             }
