@@ -1,3 +1,4 @@
+// ReSharper disable InconsistentNaming
 namespace TUtils.Common.StateMachine;
 
 /// <summary>
@@ -80,7 +81,7 @@ public abstract class State<TStateBase, TSignalBase,TContext, TISignalExecuter> 
     /// This interface provides only the minimal functionality needed by states (switching states)
     /// without exposing the full state machine interface.
     /// </summary>
-    private readonly IStateMachine4State<TStateBase, TSignalBase, TISignalExecuter> _stateMachine;
+    protected IStateMachine4State<TStateBase, TSignalBase, TISignalExecuter> StateMachine { get; }
 
     /// <summary>
     /// Initializes a new instance of the State class with the specified parameters.
@@ -99,7 +100,7 @@ public abstract class State<TStateBase, TSignalBase,TContext, TISignalExecuter> 
     /// </example>
     public State(string stateName, TContext context, IStateMachine4State<TStateBase, TSignalBase, TISignalExecuter> stateMachine)
     {
-        _stateMachine = stateMachine;
+        StateMachine = stateMachine;
         StateName = stateName;
         Context = context;
     }
@@ -166,7 +167,7 @@ public abstract class State<TStateBase, TSignalBase,TContext, TISignalExecuter> 
     ///     Context.Logger.LogError("Connection attempt failed");
     ///     Context.RetryCount++;
     ///     
-    ///     if (Context.RetryCount < Context.MaxRetries)
+    ///     if (Context.RetryCount &lt; Context.MaxRetries)
     ///     {
     ///         var retryState = new RetryingState(Context, _stateMachine);
     ///         Switch2State(retryState);
@@ -180,7 +181,7 @@ public abstract class State<TStateBase, TSignalBase,TContext, TISignalExecuter> 
     /// </example>
     protected void Switch2State(TStateBase newState)
     {
-        _stateMachine.Switch2State(newState);
+        StateMachine.Switch2State(newState);
     }
 
     /// <summary>
