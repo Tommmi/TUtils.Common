@@ -47,66 +47,66 @@ namespace TUtils.Common.Logging
 
 		private ILogValue[] GetLogValues(Func<object> map, string memberName, int lineNumber)
 		{
-			if(map == null)
-			{
-				return [];
-			}
-			var valueMap = map();
-			var type = valueMap.GetType();
-			var properties = type.GetProperties();
 			List<ILogValue> logValues = new List<ILogValue>();
-			lock (_sync)
+
+			if (map != null)
 			{
-				foreach (var property in properties)
+				var valueMap = map();
+				var type = valueMap.GetType();
+				var properties = type.GetProperties();
+				lock (_sync)
 				{
-					var name = property.Name;
-					var value = property.GetValue(valueMap)?.ToString();
-					if (!_knownLogGuids.TryGetValue(name, out var guid))
+					foreach (var property in properties)
 					{
-						_knownLogGuids[name] = guid = Guid.NewGuid();
+						var name = property.Name;
+						var value = property.GetValue(valueMap)?.ToString();
+						if (!_knownLogGuids.TryGetValue(name, out var guid))
+						{
+							_knownLogGuids[name] = guid = Guid.NewGuid();
+						}
+
+						logValues.Add(new LogValue(
+							loggingValueId: new LoggingValueKey(
+								guid: guid,
+								elementName: name,
+								isFilterable: false),
+							logValue: value));
 					}
-
-					logValues.Add( new LogValue(
-						loggingValueId: new LoggingValueKey(
-							guid: guid,
-							elementName: name,
-							isFilterable: false),
-						logValue: value));
 				}
-
-				var st = new StackTrace(skipFrames: 0, fNeedFileInfo: false);
-				var frames = st.GetFrames() ?? [];
-
-				var externalType =
-					frames.Select(f => f.GetMethod()?.DeclaringType)
-						.FirstOrDefault(t =>
-							t != null
-							&& t != this.GetType()); 
-
-				var className = externalType?.FullName ?? "<unknown>";
-
-
-				logValues.Add(new LogValue(
-					loggingValueId: new LoggingValueKey(
-						guid: PredefinedLoggingValueIDs.Class.Guid,
-						elementName: PredefinedLoggingValueIDs.Class.ElementName,
-						isFilterable: true),
-					logValue: className));
-
-				logValues.Add(new LogValue(
-					loggingValueId: new LoggingValueKey(
-						guid: PredefinedLoggingValueIDs.Action.Guid,
-						elementName: PredefinedLoggingValueIDs.Action.ElementName,
-						isFilterable: true),
-					logValue: memberName));
-
-				logValues.Add(new LogValue(
-					loggingValueId: new LoggingValueKey(
-						guid: PredefinedLoggingValueIDs.Line.Guid,
-						elementName: PredefinedLoggingValueIDs.Line.ElementName,
-						isFilterable: false),
-					logValue: lineNumber.ToString()));
 			}
+
+			var st = new StackTrace(skipFrames: 0, fNeedFileInfo: false);
+			var frames = st.GetFrames() ?? [];
+
+			var externalType =
+				frames.Select(f => f.GetMethod()?.DeclaringType)
+					.FirstOrDefault(t =>
+						t != null
+						&& t != this.GetType());
+
+			var className = externalType?.FullName ?? "<unknown>";
+
+			logValues.Add(new LogValue(
+				loggingValueId: new LoggingValueKey(
+					guid: PredefinedLoggingValueIDs.Class.Guid,
+					elementName: PredefinedLoggingValueIDs.Class.ElementName,
+					isFilterable: true),
+				logValue: className));
+
+			logValues.Add(new LogValue(
+				loggingValueId: new LoggingValueKey(
+					guid: PredefinedLoggingValueIDs.Action.Guid,
+					elementName: PredefinedLoggingValueIDs.Action.ElementName,
+					isFilterable: true),
+				logValue: memberName));
+
+			logValues.Add(new LogValue(
+				loggingValueId: new LoggingValueKey(
+					guid: PredefinedLoggingValueIDs.Line.Guid,
+					elementName: PredefinedLoggingValueIDs.Line.ElementName,
+					isFilterable: false),
+				logValue: lineNumber.ToString()));
+
 
 			return logValues.ToArray();
 		}

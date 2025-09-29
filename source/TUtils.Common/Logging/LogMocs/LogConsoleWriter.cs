@@ -11,14 +11,17 @@ namespace TUtils.Common.Logging.LogMocs
 	public class LogConsoleWriter : LogWriterBase, ILogWriter
 	{
 		private readonly LogSeverityEnum _minSeverity;
+		private readonly bool _writeToDebug;
 		private readonly List<KeyValuePair<string, bool>> _configurations;
 
 		public LogConsoleWriter(
 			LogSeverityEnum minSeverity,
 			List<string> namespacesWhiteList,
-			List<string> namespacesBlackList)
+			List<string> namespacesBlackList,
+			bool writeToDebug)
 		{
 			_minSeverity = minSeverity;
+			_writeToDebug = writeToDebug;
 			_configurations = namespacesWhiteList
 				.Select(k => new KeyValuePair<string, bool>(k == "*" ? "" : k, true))
 				.Concat(namespacesBlackList.Select(k => new KeyValuePair<string, bool>(k == "*" ? "" : k, false)))
@@ -67,7 +70,14 @@ namespace TUtils.Common.Logging.LogMocs
 			{
 				var text = GetLogTextInExcelStyle(logValues);
 
-				Console.WriteLine(text);
+				if (_writeToDebug)
+				{
+					Debug.WriteLine(text);
+				}
+				else
+				{
+					Console.WriteLine(text);
+				}
 			}
 		}
 	}

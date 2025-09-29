@@ -39,7 +39,11 @@ namespace TUtils.Common.Logging
             return storage;
         }
 
-        public static void InitializeConsoleLogging(this object loggingInstance, LogSeverityEnum minLogSeverityEnum, CallerContextDto callerContextDto = null)
+        public static void InitializeConsoleLogging(
+	        this object loggingInstance, 
+	        LogSeverityEnum minLogSeverityEnum, 
+	        CallerContextDto callerContextDto = null,
+	        bool writeToDebug = false)
         {
             lock (sync)
             {
@@ -50,7 +54,8 @@ namespace TUtils.Common.Logging
                         var logWriter = new LogConsoleWriter(
                             minSeverity: minLogSeverityEnum,
                             namespacesWhiteList: ["*"],
-                            namespacesBlackList: []);
+                            namespacesBlackList: [],
+                            writeToDebug: writeToDebug);
                         return CreateCallersContent(callerContextDto, logWriter);
                     };
                 }
