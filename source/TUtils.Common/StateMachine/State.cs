@@ -1,4 +1,7 @@
 // ReSharper disable InconsistentNaming
+
+using System.Threading.Tasks;
+
 namespace TUtils.Common.StateMachine;
 
 /// <summary>
@@ -179,9 +182,9 @@ public abstract class State<TStateBase, TSignalBase,TContext, TISignalExecuter> 
     ///     }
     /// }
     /// </example>
-    protected void Switch2State(TStateBase newState)
+    protected async Task Switch2State(TStateBase newState)
     {
-        StateMachine.Switch2State(newState);
+        await StateMachine.Switch2State(newState);
     }
 
     /// <summary>
@@ -212,7 +215,7 @@ public abstract class State<TStateBase, TSignalBase,TContext, TISignalExecuter> 
     ///     ScheduleHeartbeat();
     /// }
     /// </example>
-    public virtual void OnEntered()
+    public virtual async Task OnEntered()
     {
     }
 
@@ -249,7 +252,7 @@ public abstract class State<TStateBase, TSignalBase,TContext, TISignalExecuter> 
     ///     CancelHeartbeat();
     /// }
     /// </example>
-    public virtual void OnLeaving()
+    public virtual async Task OnLeaving()
     {
     }
 }

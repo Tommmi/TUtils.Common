@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace TUtils.Common.StateMachine
 {
     /// <summary>
@@ -121,7 +123,7 @@ namespace TUtils.Common.StateMachine
         ///     signalExecuter.OnShouldDisconnect();
         /// }
         /// </example>
-        public abstract void Trigger(TISignalExecuter signalExecuter);
+        public abstract Task Trigger(TISignalExecuter signalExecuter);
 
         /// <summary>
         /// Initializes a new instance of the Signal class with the specified signal name.

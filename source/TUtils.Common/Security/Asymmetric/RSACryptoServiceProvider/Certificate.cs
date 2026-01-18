@@ -1,7 +1,5 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using TUtils.Common.Extensions;
 using TUtils.Common.Security.Asymmetric.Common;
 
 namespace TUtils.Common.Security.Asymmetric.RSACryptoServiceProvider

@@ -1,14 +1,9 @@
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using TUtils.Common.Logging;
 using TUtils.Common.Logging.Common;
-using TUtils.Common.Logging.LogMocs;
 using TUtils.Common.Tasks;
-using ILoggerFactory = TUtils.Common.Logging.ILoggerFactory;
-using LoggerFactory = TUtils.Common.Logging.LoggerFactory;
 
 namespace TUtils.Common.Test
 {

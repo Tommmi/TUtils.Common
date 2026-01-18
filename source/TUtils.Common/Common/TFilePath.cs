@@ -142,16 +142,18 @@ namespace TUtils.Common
 				}
 
 				if (File.Exists(destPath) && overWrite)
+				{
 					DeleteFile(destPath);
+				}
 
-				File.Copy(sourcePath, destPath);
+				File.Copy(sourcePath, destPath!);
 
 			}
 			catch(Exception e)
 			{
 				if (ignoreWriteProtection)
 				{
-					var fileInfo = new FileInfo(destPath);
+					var fileInfo = new FileInfo(destPath!);
 					// delete read only flag
 					fileInfo.Attributes = fileInfo.Attributes & ~FileAttributes.ReadOnly;
 					CopyFile(sourcePath, destPath, overWrite, false, ignoreMissingSource);
@@ -193,7 +195,7 @@ namespace TUtils.Common
 		public static void CopyDirectory(string sourceDir, string destDir, bool overWrite, bool ignoreWriteProtection, bool ignoreMissingSource)
 		{
 			if (!Directory.Exists(destDir))
-				Directory.CreateDirectory(destDir);
+				Directory.CreateDirectory(destDir!);
 			RecursiveCopyFiles(sourceDir, destDir, true, overWrite, ignoreWriteProtection, ignoreMissingSource);
 		}
 
@@ -625,7 +627,7 @@ namespace TUtils.Common
 				if (File.Exists(filePath))
 					MakeWritable(true, filePath);
 
-				using(var file = File.CreateText(filePath))
+				using(var file = File.CreateText(filePath!))
 				{
 					file.Write(fileContent);
 				}

@@ -1,8 +1,6 @@
 using System;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using TUtils.Common.Extensions;
 
 namespace TUtils.Common.MVC
 {

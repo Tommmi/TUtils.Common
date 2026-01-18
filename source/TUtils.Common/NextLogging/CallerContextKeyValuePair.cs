@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace TUtils.Common.Logging
+﻿namespace TUtils.Common.Logging
 {
 	public class CallerContextKeyValuePair
 	{

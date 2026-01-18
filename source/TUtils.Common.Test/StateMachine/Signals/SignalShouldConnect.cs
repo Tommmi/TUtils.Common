@@ -1,4 +1,5 @@
-﻿using TUtils.Common.Test.StateMachine.Common;
+﻿using System.Threading.Tasks;
+using TUtils.Common.Test.StateMachine.Common;
 
 namespace TUtils.Common.Test.StateMachine.Signals;
 
@@ -11,8 +12,8 @@ public class SignalShouldConnect : TestConnectorSignal
     }
 
     /// <inheritdoc />
-    public override void Trigger(ITestConnectorSignalExecuter signalExecuter)
+    public override async Task Trigger(ITestConnectorSignalExecuter signalExecuter)
     {
-        signalExecuter.OnSignalConnect(this);
+        await signalExecuter.OnSignalConnect(this);
     }
 }

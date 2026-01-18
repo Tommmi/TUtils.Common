@@ -1,9 +1,10 @@
-﻿using TUtils.Common.Test.StateMachine.Signals;
+﻿using System.Threading.Tasks;
+using TUtils.Common.Test.StateMachine.Signals;
 
 namespace TUtils.Common.Test.StateMachine.Common;
 
 public interface ITestConnectorSignalExecuter
 {
-    void OnSignalReconnect(SignalShouldReconnect signal);
-    void OnSignalConnect(SignalShouldConnect signal);
+    Task OnSignalReconnect(SignalShouldReconnect signal);
+    Task OnSignalConnect(SignalShouldConnect signal);
 }

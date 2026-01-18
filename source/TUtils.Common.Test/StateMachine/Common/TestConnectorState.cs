@@ -1,4 +1,4 @@
-﻿using System.Data;
+﻿using System.Threading.Tasks;
 using TUtils.Common.StateMachine;
 using TUtils.Common.Test.StateMachine.Signals;
 
@@ -14,9 +14,9 @@ namespace TUtils.Common.Test.StateMachine.Common
         }
 
         /// <inheritdoc />
-        public abstract void OnSignalReconnect(SignalShouldReconnect signal);
+        public abstract Task OnSignalReconnect(SignalShouldReconnect signal);
 
         /// <inheritdoc />
-        public abstract void OnSignalConnect(SignalShouldConnect signal);
+        public abstract Task OnSignalConnect(SignalShouldConnect signal);
     }
 }

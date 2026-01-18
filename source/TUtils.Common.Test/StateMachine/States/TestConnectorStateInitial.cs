@@ -1,4 +1,5 @@
-﻿using TUtils.Common.Test.StateMachine.Common;
+﻿using System.Threading.Tasks;
+using TUtils.Common.Test.StateMachine.Common;
 using TUtils.Common.Test.StateMachine.Signals;
 
 namespace TUtils.Common.Test.StateMachine.States
@@ -12,15 +13,15 @@ namespace TUtils.Common.Test.StateMachine.States
         }
 
         /// <inheritdoc />
-        public override void OnSignalReconnect(SignalShouldReconnect signal)
+        public override async Task OnSignalReconnect(SignalShouldReconnect signal)
         {
-            Switch2State(Context.TestConnectorStateConnecting);
+            await Switch2State(Context.TestConnectorStateConnecting);
         }
 
         /// <inheritdoc />
-        public override void OnSignalConnect(SignalShouldConnect signal)
+        public override async Task OnSignalConnect(SignalShouldConnect signal)
         {
-            Switch2State(Context.TestConnectorStateConnecting);
+            await Switch2State(Context.TestConnectorStateConnecting);
         }
     }
 }

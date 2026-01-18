@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
+﻿using System.Text.Encodings.Web;
+// ReSharper disable InconsistentNaming
 
 namespace TUtils.Common.Common
 {
@@ -18,13 +14,13 @@ namespace TUtils.Common.Common
         public static string Serialize(object value)
             => JsonSerializer.Serialize(value, _options);
 
-        public static T? Deserialize<T>(string json)
+        public static T Deserialize<T>(string json)
             => JsonSerializer.Deserialize<T>(json, _options);
 
         public static object Deserialize(string json, Type returnType)
             => JsonSerializer.Deserialize(json, returnType, _options);
 
-        public static bool TryDeserialize<T>(string json, out T? result)
+        public static bool TryDeserialize<T>(string json, out T result)
         {
             try
             {

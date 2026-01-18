@@ -1,12 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using TUtils.Common.CommandLine.Common;
-// ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable UnusedMember.Global
 
 namespace TUtils.Common.CommandLine
 {
@@ -33,23 +28,6 @@ namespace TUtils.Common.CommandLine
 
 		public ICommandLineArg this[CommandLineArgDefinitionBase argDef] => this[argDef.Key];
 
-		public string UsageHint
-		{
-			get
-			{
-				var text = new StringBuilder();
-				text.Append("correct usage: ");
-				text.Append(Path.GetFileName(Assembly.GetEntryAssembly().CodeBase));
-				text.Append(" ");
-
-				foreach (var commandArgDef in _commandArgDefs)
-				{
-					text.AppendLine(commandArgDef.UsageHint + " ");
-				}
-
-				return text.ToString();
-			}
-		}
 
 		public static bool TryCreate(
 			string[] commandLineArgsRaw,

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TUtils.Common.Logging;
-using TUtils.Common.Logging.LogMocs;
 
 namespace TUtils.Common.Async
 {
@@ -82,7 +80,6 @@ namespace TUtils.Common.Async
 			/// <param name="threadName"></param>
 			/// <param name="cancellationToken"></param>
 			/// <param name="threadPriority"></param>
-			/// <param name="logger">may be null</param>
 			/// <param name="threadMethod"></param>
 			internal Thread(
 				string threadName,

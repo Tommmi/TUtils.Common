@@ -1,4 +1,4 @@
-﻿using System.Data;
+﻿using System.Threading.Tasks;
 using TUtils.Common.Logging;
 using TUtils.Common.StateMachine;
 using TUtils.Common.Test.StateMachine.Common;
@@ -15,19 +15,19 @@ public class TestConnectorStateConnected : TestConnectorState
     }
 
     /// <inheritdoc />
-    public override void OnSignalReconnect(SignalShouldReconnect signal)
+    public override async Task OnSignalReconnect(SignalShouldReconnect signal)
     {
-        Switch2State(Context.TestConnectorStateReconnecting);
+        await Switch2State(Context.TestConnectorStateReconnecting);
     }
 
     /// <inheritdoc />
-    public override void OnSignalConnect(SignalShouldConnect signal)
+    public override async Task OnSignalConnect(SignalShouldConnect signal)
     {
         
     }
 
     /// <inheritdoc />
-    public override void OnEntered()
+    public override async Task OnEntered()
     {
         this.Log().LogInfo(() => new { newState = GetType().Name });
     }

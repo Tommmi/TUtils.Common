@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace TUtils.Common.StateMachine;
 
 /// <summary>
@@ -49,7 +51,7 @@ public interface IStateMachine<TStateBase,TSignalBase, TISignalExecuter>
     /// // The current state will handle this signal and may transition to a new state
     /// Console.WriteLine($"Current state: {stateMachine.CurrentState.StateName}");
     /// </example>
-    void Trigger(TSignalBase signal);
+    Task Trigger(TSignalBase signal);
 
     /// <summary>
     /// Gets the current active state of the state machine.

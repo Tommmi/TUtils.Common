@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace TUtils.Common.StateMachine;
 
 /// <summary>
@@ -51,5 +53,5 @@ public interface IStateMachine4State<TStateBase, TSignalBase, TISignalExecuter> 
     ///     Switch2State(connectedState);  // This will trigger OnLeaving() on current state and OnEntered() on new state
     /// }
     /// </example>
-    void Switch2State(TStateBase newState);
+    Task Switch2State(TStateBase newState);
 }

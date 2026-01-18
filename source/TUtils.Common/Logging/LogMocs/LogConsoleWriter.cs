@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using TUtils.Common.Common;
 using TUtils.Common.Logging.Common;
 
 namespace TUtils.Common.Logging.LogMocs

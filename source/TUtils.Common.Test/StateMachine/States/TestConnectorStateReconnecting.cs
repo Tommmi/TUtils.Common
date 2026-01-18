@@ -21,7 +21,7 @@ public class TestConnectorStateReconnecting : TestConnectorState, IDisposable
         _connectingTrialInterval = connectingTrialInterval;
     }
 
-    public override void OnEntered()
+    public override async Task OnEntered()
     {
         this.Log().LogInfo(() => new { newState = GetType().Name });
         StartReconnectTask();
@@ -47,17 +47,17 @@ public class TestConnectorStateReconnecting : TestConnectorState, IDisposable
             }
         }
 
-        Switch2State(Context.TestConnectorStateConnected);
+        await Switch2State(Context.TestConnectorStateConnected);
     }
 
     /// <inheritdoc />
-    public override void OnSignalReconnect(SignalShouldReconnect signal)
+    public override async Task OnSignalReconnect(SignalShouldReconnect signal)
     {
         
     }
 
     /// <inheritdoc />
-    public override void OnSignalConnect(SignalShouldConnect signal)
+    public override async Task OnSignalConnect(SignalShouldConnect signal)
     {
         
     }

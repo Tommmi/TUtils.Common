@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 using TUtils.Common.Logging.Common;
 
 namespace TUtils.Common.Logging

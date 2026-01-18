@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace TUtils.Common.StateMachine;
 
 /// <summary>
@@ -85,6 +87,6 @@ public interface ISignal<TSignalBase,TISignalExecuter>
     ///     signalExecuter.OnSinalA(this);
     /// }
     /// </example>
-    void Trigger(TISignalExecuter signalExecuter);
+    Task Trigger(TISignalExecuter signalExecuter);
 }
 

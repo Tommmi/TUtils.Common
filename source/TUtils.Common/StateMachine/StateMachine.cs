@@ -1,3 +1,6 @@
+using System.Threading.Tasks;
+using TUtils.Common.Async;
+
 namespace TUtils.Common.StateMachine;
 
 /// <summary>
@@ -72,6 +75,8 @@ public class StateMachine<TStateBase, TSignalBase,TContext, TISignalExecuter> : 
     /// </summary>
     private object _sync = new object();
 
+    private TSemaphore _semaphore = new TSemaphore(reentranceable:true);
+
     /// <summary>
     /// Gets the name of this state machine instance.
     /// This is useful for logging and debugging when multiple state machines are used in an application.
@@ -108,9 +113,9 @@ public class StateMachine<TStateBase, TSignalBase,TContext, TISignalExecuter> : 
     ///         break;
     /// }
     /// </example>
-    public TStateBase CurrentState 
+    public TStateBase CurrentState
     {
-        get
+	    get
         {
             lock (_sync)
             {
@@ -118,7 +123,13 @@ public class StateMachine<TStateBase, TSignalBase,TContext, TISignalExecuter> : 
             }
         }
 
-        private set => _currentState = value;
+	    private set
+	    {
+		    lock (_sync)
+		    {
+			    _currentState = value;
+		    }
+	    }
     }
 
     /// <summary>
@@ -157,14 +168,14 @@ public class StateMachine<TStateBase, TSignalBase,TContext, TISignalExecuter> : 
     /// 
     /// Console.WriteLine($"State machine initialized in state: {stateMachine.CurrentState.StateName}");
     /// </example>
-    public void Initialize(TStateBase initialState)
+    public async Task Initialize(TStateBase initialState)
     {
-        lock (_sync)
+        await _semaphore.DoSynchronized(async () =>
         {
             CurrentState = initialState;
-            CurrentState.OnEntered();
-        }
-    }
+            await CurrentState.OnEntered();
+        });
+	}
 
     /// <summary>
     /// Triggers a signal to be processed by the current state.
@@ -205,12 +216,12 @@ public class StateMachine<TStateBase, TSignalBase,TContext, TISignalExecuter> : 
     /// Thread.Sleep(1000);  // Allow connection to establish
     /// stateMachine.Trigger(new SendDataSignal(data));
     /// </example>
-    public void Trigger(TSignalBase signal)
+    public async Task Trigger(TSignalBase signal)
     {
-        lock (_sync)
+        await _semaphore.DoSynchronized(async () =>
         {
-            signal.Trigger(CurrentState);
-        }
+            await signal.Trigger(CurrentState);
+        });
     }
 
     /// <summary>
@@ -244,13 +255,13 @@ public class StateMachine<TStateBase, TSignalBase,TContext, TISignalExecuter> : 
     /// // 2. Set ConnectedState as current
     /// // 3. Call OnEntered() on ConnectedState
     /// </example>
-    public void Switch2State(TStateBase state)
+    public async Task Switch2State(TStateBase state)
     {
-        lock (_sync)
+        await _semaphore.DoSynchronized(async () =>
         {
-            CurrentState.OnLeaving();
+            await CurrentState.OnLeaving();
             CurrentState = state;
-            CurrentState.OnEntered();
-        }
+            await CurrentState.OnEntered();
+        });
     }
 }
