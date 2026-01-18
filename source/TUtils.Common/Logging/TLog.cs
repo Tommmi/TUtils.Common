@@ -323,7 +323,7 @@ namespace TUtils.Common.Logging
 			//Timestamp
 			logValues.Add(new LogValue(
 				PredefinedLoggingValueIDs.Timestamp,
-				now.ToString("HHmmss") + now.Millisecond.ToString("D3")));
+				$"{now:yyyyMMddHHmmssfff}"));
 			//ExceptionObject
 			if (e != null)
 				logValues.Add(new LogValue(

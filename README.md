@@ -27,6 +27,7 @@ NuGet packages:
 | TFilePath     | File path manipulation with parsing into components and static helper methods for file operations |
 | CommandLineArgs       | Command line argument parsing with type-safe definitions and automatic USAGE text generation |
 | **Async & Threading** |  |
+| TSemaphore | SemaphoreSlim Wrapper |
 | AsyncEvent, AsyncEvent\<TResult\> | Events for asynchronous waiting with await keyword and optional result values |
 | AsyncThreadStarter       | Creates threads with async/await support and cancellation token handling |
 | TThreadStorage\<T\>       | Thread-bound object storage for thread-local data |

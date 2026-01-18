@@ -40,17 +40,6 @@ public abstract class LogWriterBase
 		//_columns.Add(MPredefinedLoggingValueIDs.SendingMessageContent.GUID);
 		//_columns.Add(MPredefinedLoggingValueIDs.SendingMessageID.GUID);
 
-		try
-		{
-			log4net.Config.XmlConfigurator.Configure();
-		}
-		catch (Exception e)
-		{
-			if (e.Message.Contains("The file is not currently locked"))
-				throw new ApplicationException("usah38rh may be log output file is opened", e);
-
-			throw;
-		}
 	}
 
 	#endregion
@@ -89,13 +78,23 @@ public abstract class LogWriterBase
 					var key = logValue.Key;
 
 					if (
-						colGuid == PredefinedLoggingValueIDs.Timestamp.Guid ||
+						
 						colGuid == PredefinedLoggingValueIDs.Severity.Guid ||
 						colGuid == PredefinedLoggingValueIDs.Filename.Guid)
+					{
 						text.Append(logValue.Value);
+					}
+					else if(colGuid == PredefinedLoggingValueIDs.Timestamp.Guid)
+					{
+						text.Append($"\"'{logValue.Value}\""
+									.EnsureStringAsExcelField());
+					}
 					else
-						text.Append($"{key.ElementName}={logValue.Value}"
-							.CleanFromExcelSymbols());
+					{
+						text.Append($"\"{key.ElementName}={logValue.Value}\""
+									.EnsureStringAsExcelField());
+
+					}
 				}
 				else
 				{

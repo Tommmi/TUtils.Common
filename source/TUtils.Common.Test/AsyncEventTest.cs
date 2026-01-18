@@ -25,7 +25,7 @@ namespace TUtils.Common.Test
 			var cancellationSource = new CancellationTokenSource();
 			var cancellationToken = cancellationSource.Token;
 			var myEvent = new AsyncEvent(cancellationToken);
-			var waitOnEvent = myEvent.RegisterForEvent();
+			var waitOnEvent = myEvent.WaitAsync();
 			var executed = false;
 
 			// Act: Schedule event to be raised after 1 second delay

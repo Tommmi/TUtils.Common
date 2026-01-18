@@ -49,7 +49,7 @@ namespace TUtils.Common.Async
 		/// Task completes, when method Rise() is called.
 		/// </summary>
 		/// <returns></returns>
-		public Task RegisterForEvent()
+		public Task WaitAsync()
 		{
 			var tcs = new TaskCompletionSource<bool>();
 
@@ -78,7 +78,7 @@ namespace TUtils.Common.Async
 		/// Task completes, when method Rise() is called.
 		/// </summary>
 		/// <returns></returns>
-		public Task<TResult> RegisterForEvent()
+		public Task<TResult> WaitAsync()
 		{
 			if (_cancellationToken.HasValue)
 				_cancellationToken.Value.ThrowIfCancellationRequested();

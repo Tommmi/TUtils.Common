@@ -95,9 +95,9 @@ namespace TUtils.Common.Async
 				_cancellationToken = cancellationToken;
 				// waiting tasks for the events _startedEv and _terminatedEv may not be canceled 
 				_startedEv = new AsyncEvent(null);
-				_waitForStart = _startedEv.RegisterForEvent();
+				_waitForStart = _startedEv.WaitAsync();
 				_terminatedEv = new AsyncEvent(null);
-				_waitForTerminated = _terminatedEv.RegisterForEvent();
+				_waitForTerminated = _terminatedEv.WaitAsync();
 				var thread = new Thread(ThreadMethod);
 				thread.Name = threadName;
 				thread.Priority = threadPriority;

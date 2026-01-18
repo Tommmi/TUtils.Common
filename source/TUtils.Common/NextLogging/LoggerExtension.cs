@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Reflection.Metadata;
 using TUtils.Common.Logging.Common;
 using TUtils.Common.Logging.Log4Net;
 using TUtils.Common.Logging.LogMocs;
 using TUtils.Common.Tasks;
 
+#pragma warning disable IDE0130
 namespace TUtils.Common.Logging
+#pragma warning restore IDE0130
 {
 	public static class LoggerExtension
 	{
-        private static object sync = new object();
-        private static Func<ICallerContext> _createCallerContext = null;
+        private static object _sync = new ();
+        private static Func<ICallerContext> _createCallerContext;
 
         public static ILogger Log(this object loggingInstance, ICallerContext callContext)
         {
@@ -45,7 +46,7 @@ namespace TUtils.Common.Logging
 	        CallerContextDto callerContextDto = null,
 	        bool writeToDebug = false)
         {
-            lock (sync)
+            lock (_sync)
             {
                 if(_createCallerContext == null)
                 {
@@ -64,7 +65,7 @@ namespace TUtils.Common.Logging
 
         public static void InitializeLog4NetLogging(this object loggingInstance, CallerContextDto callerContextDto = null)
         {
-            lock (sync)
+            lock (_sync)
             {
                 if (_createCallerContext == null)
                 {
@@ -75,6 +76,23 @@ namespace TUtils.Common.Logging
                     };
                 }
             }
+        }
+
+        public static void InitializeLog4IndividualLogging(
+	        this object loggingInstance, 
+            ILogWriter individualLogWriter,
+	        CallerContextDto callerContextDto = null)
+        {
+	        lock (_sync)
+	        {
+		        if (_createCallerContext == null)
+		        {
+			        _createCallerContext = () =>
+			        {
+				        return CreateCallersContent(callerContextDto, individualLogWriter);
+			        };
+		        }
+	        }
         }
 
         private static ICallerContext CreateCallersContent(CallerContextDto callerContextDto, ILogWriter logWriter)

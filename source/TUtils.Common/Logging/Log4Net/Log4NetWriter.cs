@@ -21,6 +21,22 @@ namespace TUtils.Common.Logging.Log4Net
 
 		#endregion
 
+		public Log4NetWriter()
+		{
+			try
+			{
+				log4net.Config.XmlConfigurator.Configure();
+			}
+			catch (Exception e)
+			{
+				if (e.Message.Contains("The file is not currently locked"))
+					throw new ApplicationException("usah38rh may be log output file is opened", e);
+
+				throw;
+			}
+		}
+
+
 		#region private
 
 		private ILog GetLogger(string category)

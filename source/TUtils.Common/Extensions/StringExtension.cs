@@ -311,32 +311,102 @@ namespace TUtils.Common.Extensions
 			}
 		}
 
-		public static string CleanFromExcelSymbols(this string text)
+		public static string EnsureStringAsExcelField(this string text)
 		{
-			StringBuilder resText = new StringBuilder();
-			resText.Append('\"');
-			foreach (char c in text)
+			bool isEscape = false;
+			bool isStringField = false;
+
+			StringBuilder sb = new StringBuilder();
+
+			for(int i=0; i< text.Length; i++)
 			{
-				switch (c)
+				char c = text[i];
+
+				if(i==0)
 				{
-					case '\x0D':
-					case '\"':
-						break;
-					case ';':
-						resText.Append(',');
-						break;
-					case '\n':
-						resText.Append('\x0A');
-						break;
-					default:
-						resText.Append(c);
-						break;
+					if (c == '\"')
+					{
+						isStringField = true;
+						sb.Append(c);
+						continue;
+					}
 				}
 
+
+				switch(c)
+				{
+					case '\"':
+						if(!isStringField)
+						{
+							sb.Insert(0, '\"');
+							isStringField = true;
+						}
+
+						if(isEscape)
+						{
+							sb.Append("\"\"");
+							isEscape = false;
+						}
+						else
+						{
+							isEscape = true;
+						}
+
+						if (i == text.Length - 1)
+						{
+							sb.Append('\"');
+						}
+
+						break;
+					case '\n':
+					case '\r':
+					case '\t':
+					case ';':
+						if (!isStringField)
+						{
+							sb.Insert(0, '\"');
+							isStringField = true;
+						}
+
+						if (isEscape)
+						{
+							sb.Append("\"\"");
+						}
+
+						sb.Append(c);
+						isEscape = false;
+
+						if (i == text.Length - 1)
+						{
+							sb.Append('\"');
+						}
+
+
+						break;
+					default:
+						if (isEscape)
+						{
+							sb.Append("\"\"");
+						}
+
+						sb.Append(c);
+						isEscape = false;
+
+						if(isStringField)
+						{
+							if (i == text.Length - 1)
+							{
+								sb.Append('\"');
+							}
+						}
+
+						break;
+				}
 			}
-			resText.Append('\"');
-			return resText.ToString();
-		}
+
+			return sb.ToString();
+	    }
+
 
         public static T? DeserializeByTUtils<T>(this string json)
             => TSerializer.Deserialize<T>(json);
